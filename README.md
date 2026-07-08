@@ -1,74 +1,77 @@
 # claude-qa-skills
 
-**Скиллы для Claude Code, которые превращают AI-агента в дотошного QA-инженера.**
+**Claude Code skills that turn an AI agent into a meticulous QA engineer.**
 
-> Ваш AI говорит «всё работает, тесты зелёные». А он проверял?
+> Your AI says "everything works, tests are green." Did it actually check?
 >
-> Этот пак заставляет агента играть по правилам QA: каждый Pass/Fail — только по реально наблюдённому артефакту (скриншот, ответ сети, лог). Не проверил — пишет «не проверено», а не догадку.
+> This pack makes the agent play by QA rules: every Pass/Fail verdict must be backed by an actually observed artifact (a screenshot, a network response, a log). Didn't check — it says "Not tested" instead of guessing.
 
-<!-- TODO: demo GIF — Claude находит реальный баг сериализации ([object Object] в payload формы) и прикладывает пруф -->
+🇷🇺 [Русская версия](README.ru.md) — the skills ship in two languages.
 
-## Что внутри
+<!-- TODO: demo GIF — Claude finds a real serialization bug ([object Object] in a form payload) and attaches the proof -->
 
-| Скилл | Что делает |
+## What's inside
+
+| Skill | What it does |
 |---|---|
-| [`testing`](skills/testing/SKILL.md) | Флагман. Универсальный фреймворк тестирования (frontend + backend): доказательная дисциплина, техники тест-дизайна до точных границ (BVA/EP/таблицы решений/STT/pairwise), ~1000 строк справочников-чеклистов, мультиагентный fan-out для больших прогонов |
-| [`test-review`](skills/test-review/SKILL.md) | Ревью Playwright-автотестов до коммита: severity (Blocker→Nit), привязка к строкам, готовые фиксы `❌ было → ✅ стало`, каталог из 30+ правил со ссылками на официальную доку |
-| [`test-cases`](skills/test-cases/SKILL.md) | Генерация тест-кейсов по best practice: атомарные шаги, ОР из требований (не из реализации), CSV для импорта в Zephyr Scale (Option 1) или прямое создание через MCP вашей TMS |
-| [`interview`](skills/interview/SKILL.md) | Структурированный сбор требований, когда задача описана «на словах»: 2-3 раунда вопросов → готовый документ с AC и edge cases |
-| [`bug-report`](skills/bug-report/SKILL.md) | Баг в Jira за минуту: сбор данных → превью → создание после подтверждения, с обязательными кастомными полями вашего проекта |
+| [`testing`](skills/testing/SKILL.md) | The flagship. A universal testing framework (frontend + backend): evidence discipline, test-design techniques down to exact boundaries (BVA / EP / decision tables / state transitions / pairwise), ~1000 lines of reference checklists, multi-agent fan-out for large runs |
+| [`test-review`](skills/test-review/SKILL.md) | Playwright test review before commit: severity (Blocker→Nit), line-level findings, ready-to-apply fixes `❌ before → ✅ after`, a catalog of 30+ rules with links to the official docs |
+| [`test-cases`](skills/test-cases/SKILL.md) | Test-case generation by QA best practices: atomic steps, expected results taken from requirements (not from the implementation), CSV for Zephyr Scale import (Option 1) or direct creation via your TMS MCP |
+| [`interview`](skills/interview/SKILL.md) | Structured requirements elicitation when the task is described "in words": 2-3 rounds of questions → a document with AC and edge cases |
+| [`bug-report`](skills/bug-report/SKILL.md) | A Jira bug in a minute: data collection → preview → creation after confirmation, with your project's required custom fields |
 
-## Почему это работает
+## Why it works
 
-**1. Доказательность вместо галлюцинаций.** Ядро пака — дисциплина: вердикт только по наблюдённому артефакту; `Not tested` и `Blocked` — честные статусы, а не позор; замечание в ревью — только по реально прочитанной строке или выводу линтера. Это лечит главную болезнь AI-агентов в тестировании — уверенные отчёты о непроверенном.
+**1. Evidence instead of hallucinations.** The core of the pack is discipline: a verdict only from an observed artifact; `Not tested` and `Blocked` are honest statuses, not something to hide; a review finding must point to an actually read line or linter output. This treats the main disease of AI agents in testing — confident reports about things never checked.
 
-**2. Чеклисты, за которые платят сеньорам.** Справочники скилла `testing` полезны и без Claude — как обычные чеклисты:
-- [`frontend.md`](skills/testing/references/frontend.md) — поля и маски, все состояния каждого элемента (hover/focus/disabled/loading), сверка с Figma, токены, адаптив, кросс-браузер
-- [`backend.md`](skills/testing/references/backend.md) — HTTP-семантика, контракты, идемпотентность, БД (транзакции, конкурентность, миграции), AuthN/AuthZ/IDOR, очереди/DLQ/вебхуки, OWASP API Top 10
-- [`cross-cutting.md`](skills/testing/references/cross-cutting.md) — сетевые моки, consistency UI↔Backend, сессии, TZ/i18n, платежи, файлы, поиск
-- [`common-misses.md`](skills/testing/references/common-misses.md) — 28 проверок, которые пропускают чаще всего
-- [`fan-out.md`](skills/testing/references/fan-out.md) — как дробить большой прогон на параллельных субагентов без потери доказательности
-- [`artifacts.md`](skills/testing/references/artifacts.md) — доказательства, структура баг-репорта, severity vs priority, сводный отчёт
+**2. Checklists seniors get paid for.** The `testing` references are useful even without Claude — as plain checklists:
+- [`frontend.md`](skills/testing/references/frontend.md) — inputs and masks, every state of every element (hover/focus/disabled/loading), Figma comparison, design tokens, responsive layout, cross-browser
+- [`backend.md`](skills/testing/references/backend.md) — HTTP semantics, contracts, idempotency, DB (transactions, concurrency, migrations), AuthN/AuthZ/IDOR, queues/DLQ/webhooks, OWASP API Top 10
+- [`cross-cutting.md`](skills/testing/references/cross-cutting.md) — network mocks, UI↔Backend consistency, sessions, TZ/i18n, payments, files, search
+- [`common-misses.md`](skills/testing/references/common-misses.md) — 28 checks that get missed most often
+- [`fan-out.md`](skills/testing/references/fan-out.md) — how to split a large run across parallel subagents without losing evidence discipline
+- [`artifacts.md`](skills/testing/references/artifacts.md) — evidence, bug-report structure, severity vs priority, run summary report
 
-**3. Скиллы связаны в конвейер.** `interview` (требования) → `test-cases` (ТК) → `testing` (прогон) → `bug-report` (дефекты) → `test-review` (автотесты до коммита).
+**3. The skills chain into a pipeline.** `interview` (requirements) → `test-cases` (test cases) → `testing` (the run) → `bug-report` (defects) → `test-review` (automated tests before commit).
 
-## Установка
+## Install
 
-Нужен [Claude Code](https://claude.com/claude-code). Скиллы ставятся копированием:
+Requires [Claude Code](https://claude.com/claude-code). Skills install by copying:
 
 ```bash
 git clone https://github.com/<owner>/claude-qa-skills.git
-cp -r claude-qa-skills/skills/* ~/.claude/skills/          # для всех проектов
-# или в конкретный проект:
+cp -r claude-qa-skills/skills/* ~/.claude/skills/          # for all projects
+# or into a specific project:
 cp -r claude-qa-skills/skills/* <project>/.claude/skills/
 ```
 
-Claude подхватит скиллы автоматически по описанию задачи, либо вызывайте явно: «протестируй форму по скиллу testing», `/test-review`, `/bug-report`.
+Russian versions live in [`ru/skills/`](ru/skills/) — copy from there instead if you want the skills in Russian.
 
-## Адаптация под свой проект
+Claude picks the skills up automatically based on your request, or invoke them explicitly: "test this form with the testing skill", `/test-review`, `/bug-report`.
 
-Пак работает из коробки, но становится сильнее с настройкой:
+## Adapting to your project
 
-- **`test-review`** — заполните секцию K (правила вашего репозитория: кастомные фикстуры, паттерны сьютов, окружения). Шаблон с примерами уже внутри.
-- **`bug-report`** — раздел 0: проект, тип задачи, обязательные кастомные поля вашего Jira.
-- **`test-cases`** — граница дерева папок вашей TMS (раздел 13), если проект общий для нескольких команд.
-- Целевые разрешения и браузеры — под вашу аналитику трафика (дефолты в `skills/testing/references/frontend.md` §2.3).
+The pack works out of the box, but gets stronger with tuning:
 
-## Ограничения
+- **`test-review`** — fill in section K (your repository's rules: custom fixtures, suite patterns, environments). A template with examples is already inside.
+- **`bug-report`** — section 0: project, issue type, your Jira's required custom fields.
+- **`test-cases`** — your TMS folder-tree boundary (section 13) if the TMS project is shared across teams.
+- Target resolutions and browsers — tune to your traffic analytics (defaults in `skills/testing/references/frontend.md` §2.3).
 
-- Скиллы на русском языке (английская версия — в работе, см. Roadmap).
-- `bug-report` рассчитан на Jira через [Atlassian MCP](https://github.com/sooperset/mcp-atlassian); `test-cases` умеет CSV без MCP.
-- Доступность (a11y/WCAG) сознательно вне scope; состояния hover/focus/disabled покрываются.
+## Limitations
+
+- `bug-report` targets Jira via the [Atlassian MCP](https://github.com/sooperset/mcp-atlassian); `test-cases` can produce CSV without any MCP.
+- Accessibility (a11y/WCAG) is deliberately out of scope; hover/focus/disabled states are covered.
+- The pack targets web (desktop + mobile responsive); mobile-native is on the roadmap as a checklist.
 
 ## Roadmap
 
-- [ ] English version of all skills
-- [ ] Формат Claude Code plugin (установка одной командой)
-- [ ] Чеклист GraphQL API
-- [ ] Чеклист mobile-native (сейчас пак про web: десктоп + мобильный адаптив)
+- [ ] Claude Code plugin format (one-command install)
+- [ ] GraphQL API checklist
+- [ ] Mobile-native checklist
 
-PR и issues приветствуются. Если скилл дал вердикт без пруфа — это баг, заводите issue.
+PRs and issues welcome. If a skill produced a verdict without proof — that's a bug, file an issue.
 
-## Лицензия
+## License
 
 [MIT](LICENSE)
