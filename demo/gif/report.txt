@@ -1,0 +1,26 @@
+
+\e[1m# Feedback form — submit flow test report\e[0m
+
+\e[1m## Verdict\e[0m
+The submit flow \e[3mappears\e[0m to work end-to-end (validation passes, 200 OK,
+success toast, form resets) — \e[1mbut the POST payload is corrupted\e[0m:
+\e[33m`topic` is serialized as the literal string "[object Object]"\e[0m on every
+submission. A silent data-integrity defect masked by a visible success.
+
+\e[1m## Evidence\e[0m (each verdict = one observed artifact)
+ 1  Fill valid data → submit          \e[32mPass\e[0m  filled-form.png
+ 2  POST /api/feedback                \e[32mPass\e[0m  200 OK, content-type: json
+ 6  Success toast shown               \e[32mPass\e[0m  toastShown:true @16ms
+ 8  Actual POST payload correctness   \e[31;1mFAIL\e[0m  topic:"[object Object]"
+
+\e[1m## 🐞 Defect — topic sent as "[object Object]"\e[0m
+Actual payloads captured from the network (3 submissions, 3 topics):
+  Billing & payments → \e[31m{"topic":"[object Object]"\e[0m, ...}
+  Report a bug       → \e[31m{"topic":"[object Object]"\e[0m, ...}
+  Account access     → \e[31m{"topic":"[object Object]"\e[0m, ...}
+
+\e[1mRoot cause\e[0m: index.html L81+L93 — `${topic}` stringifies the {id,label}
+object. \e[1mFix\e[0m: topic: topic.id
+\e[1mSeverity: Major\e[0m (silent data loss) — invisible in the UI; the server
+returns 200 blindly and the UI shows success. Only payload inspection
+surfaces this class of bug.

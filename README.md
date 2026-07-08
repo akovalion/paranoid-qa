@@ -8,7 +8,9 @@
 
 🇷🇺 [Русская версия](README.ru.md) — the skills ship in two languages.
 
-<!-- TODO: demo GIF — Claude finds a real serialization bug ([object Object] in a form payload) and attaches the proof -->
+![Claude Code finds a hidden payload bug with the testing skill](assets/demo.gif)
+
+*A real run against [`demo/`](demo/): the UI shows success and the server returns 200 — but the actual POST payload carries `"topic":"[object Object]"`. UI-only checks pass; payload inspection fails it. The recording is a time-compressed replay of an unedited session; reproduce it yourself with `node demo/server.mjs` and the prompt above.*
 
 ## What's inside
 
