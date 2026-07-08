@@ -1,4 +1,4 @@
-# claude-qa-skills
+# paranoid-qa
 
 **Claude Code skills that turn an AI agent into a meticulous QA engineer.**
 
@@ -41,10 +41,10 @@
 Requires [Claude Code](https://claude.com/claude-code). Skills install by copying:
 
 ```bash
-git clone https://github.com/<owner>/claude-qa-skills.git
-cp -r claude-qa-skills/skills/* ~/.claude/skills/          # for all projects
+git clone https://github.com/<owner>/paranoid-qa.git
+cp -r paranoid-qa/skills/* ~/.claude/skills/          # for all projects
 # or into a specific project:
-cp -r claude-qa-skills/skills/* <project>/.claude/skills/
+cp -r paranoid-qa/skills/* <project>/.claude/skills/
 ```
 
 Russian versions live in [`ru/skills/`](ru/skills/) — copy from there instead if you want the skills in Russian.

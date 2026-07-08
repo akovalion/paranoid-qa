@@ -1,4 +1,4 @@
-# claude-qa-skills
+# paranoid-qa
 
 **Скиллы для Claude Code, которые превращают AI-агента в дотошного QA-инженера.**
 
@@ -41,10 +41,10 @@
 Нужен [Claude Code](https://claude.com/claude-code). Скиллы ставятся копированием:
 
 ```bash
-git clone https://github.com/<owner>/claude-qa-skills.git
-cp -r claude-qa-skills/ru/skills/* ~/.claude/skills/       # для всех проектов
+git clone https://github.com/<owner>/paranoid-qa.git
+cp -r paranoid-qa/ru/skills/* ~/.claude/skills/       # для всех проектов
 # или в конкретный проект:
-cp -r claude-qa-skills/ru/skills/* <project>/.claude/skills/
+cp -r paranoid-qa/ru/skills/* <project>/.claude/skills/
 ```
 
 Английские версии лежат в [`skills/`](skills/) — копируйте оттуда, если нужны скиллы на английском.
