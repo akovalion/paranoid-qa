@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acme Support — Feedback</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --accent:#4f46e5; --border:#d4d4d8; --err:#dc2626; }
+  * { box-sizing:border-box; margin:0; }
+  body { font:16px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif; background:#fafafa; color:#18181b;
+         display:grid; place-items:center; min-height:100vh; }
+  form { background:#fff; border:1px solid var(--border); border-radius:12px; padding:32px; width:min(440px, 92vw);
+         box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  h1 { font-size:22px; margin-bottom:4px; }
+  p.sub { color:#71717a; font-size:14px; margin-bottom:24px; }
+  label { display:block; font-size:14px; font-weight:600; margin:14px 0 4px; }
+  input, select, textarea { width:100%; padding:10px 12px; font:inherit; border:1px solid var(--border);
+         border-radius:8px; background:#fff; }
+  input:focus, select:focus, textarea:focus { outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
+  textarea { resize:vertical; min-height:90px; }
+  .error { color:var(--err); font-size:13px; min-height:18px; }
+  button { margin-top:18px; width:100%; padding:12px; font:inherit; font-weight:600; color:#fff;
+           background:var(--accent); border:0; border-radius:8px; cursor:pointer; }
+  button:hover { background:#4338ca; }
+  button:disabled { opacity:.6; cursor:not-allowed; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#16a34a; color:#fff;
+           padding:12px 20px; border-radius:8px; font-size:14px; opacity:0; transition:opacity .3s; pointer-events:none; }
+  .toast.show { opacity:1; }
+</style>
+</head>
+<body>
+<form id="feedback" novalidate>
+  <h1>Contact support</h1>
+  <p class="sub">We usually reply within one business day.</p>
+
+  <label for="name">Full name</label>
+  <input id="name" name="name" type="text" autocomplete="name" required>
+  <div class="error" id="err-name"></div>
+
+  <label for="email">Email</label>
+  <input id="email" name="email" type="email" autocomplete="email" required>
+  <div class="error" id="err-email"></div>
+
+  <label for="topic">Topic</label>
+  <select id="topic" required>
+    <option value="" selected disabled>Choose a topic…</option>
+  </select>
+  <div class="error" id="err-topic"></div>
+
+  <label for="message">Message</label>
+  <textarea id="message" maxlength="500" required></textarea>
+  <div class="error" id="err-message"></div>
+
+  <button type="submit" id="submit">Send message</button>
+</form>
+<div class="toast" id="toast">Thanks! Your message has been sent.</div>
+
+<script>
+  const TOPICS = [
+    { id: 'billing',  label: 'Billing & payments' },
+    { id: 'bug',      label: 'Report a bug' },
+    { id: 'account',  label: 'Account access' },
+    { id: 'other',    label: 'Something else' },
+  ];
+  const select = document.getElementById('topic');
+  for (const t of TOPICS) {
+    const o = document.createElement('option');
+    o.value = t.id; o.textContent = t.label;
+    select.append(o);
+  }
+
+  const form = document.getElementById('feedback');
+  const err = (id, msg) => { document.getElementById('err-' + id).textContent = msg || ''; };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const topic = TOPICS.find(t => t.id === select.value);
+
+    let ok = true;
+    err('name',  name ? '' : 'Required field'); ok &&= !!name;
+    err('email', /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) ? '' : 'Enter a valid email'); ok &&= /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+    err('topic', topic ? '' : 'Choose a topic'); ok &&= !!topic;
+    err('message', message ? '' : 'Required field'); ok &&= !!message;
+    if (!ok) return;
+
+    const btn = document.getElementById('submit');
+    btn.disabled = true; btn.textContent = 'Sending…';
+
+    const payload = { name, email, topic: `${topic}`, message };
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    btn.disabled = false; btn.textContent = 'Send message';
+    if (res.ok) {
+      form.reset();
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  });
+</script>
+</body>
+</html>
