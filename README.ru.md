@@ -41,7 +41,7 @@
 Нужен [Claude Code](https://claude.com/claude-code). Скиллы ставятся копированием:
 
 ```bash
-git clone https://github.com/<owner>/paranoid-qa.git
+git clone https://github.com/akovalion/paranoid-qa.git
 cp -r paranoid-qa/ru/skills/* ~/.claude/skills/       # для всех проектов
 # или в конкретный проект:
 cp -r paranoid-qa/ru/skills/* <project>/.claude/skills/

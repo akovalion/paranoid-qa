@@ -41,7 +41,7 @@
 Requires [Claude Code](https://claude.com/claude-code). Skills install by copying:
 
 ```bash
-git clone https://github.com/<owner>/paranoid-qa.git
+git clone https://github.com/akovalion/paranoid-qa.git
 cp -r paranoid-qa/skills/* ~/.claude/skills/          # for all projects
 # or into a specific project:
 cp -r paranoid-qa/skills/* <project>/.claude/skills/
