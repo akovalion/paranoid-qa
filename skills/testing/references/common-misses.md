@@ -1,28 +1,28 @@
-## 6. Чек-лист «частые пропуски»
+## 6. "Common misses" checklist
 
-- Двойной клик / дабл-сабмит формы / спам по кнопке во время loading; защита через дизейбл + idempotency на бэке.
-- Back/Forward браузера, F5 на середине флоу, прямой deeplink, открытие в новой вкладке, ручное изменение URL.
-- Истёкшая сессия в процессе действия (следующий action ловит 401 → релогин с сохранением намерения); разлогин в другой вкладке.
-- Гонки запросов (latest-wins, out-of-order, отмена при смене фильтра); debounce + abort.
-- Самоотмена обработчика (кнопка реагирует, но конечное состояние ≠ обещанию подписи): второй вызов гасит side-effect'ом первый (выставил флаг → следующий сеттер стора его сбросил); `useEffect`/смена таба обнуляют только что выставленное; «Save/Delete/Send» лишь валидирует или ставит флаг без вызова API; ветка `if(state)` всегда ложна. Сверять конечное состояние во всех слоях (UI ↔ стор/хранилище ↔ сеть), а не факт реакции.
-- Пустой список / ровно 1 элемент / 1000+ элементов (рендер, пагинация, виртуализация, перф).
-- Эмодзи (ZWJ-составные) / RTL / спецсимволы / суррогатные пары; графемные кластеры в счётчиках длины.
-- Zoom 200% (reflow в одну колонку без горизонтального скролла), увеличенный системный шрифт.
-- DST / таймзоны / clock skew / 29.02 / граница суток / полночь UTC vs локальная / «5 минут назад» не в будущее.
-- IDOR (чужой id в запросе при скрытой кнопке в UI), вертикальная эскалация (admin-эндпоинт), mass assignment.
-- Paste (trim/снятие формата) / autofill не триггерит live-валидацию / drag-n-drop текста.
-- Мультивкладка (логаут/изменение в A → реакция в B), параллельное редактирование (lost update).
-- Idempotency (повтор после таймаута/ретрая не создаёт дубль платежа/заказа); idempotency-key на действие, не на ретрай.
-- Только пробелы / NBSP / zero-width в обязательном поле (= пустое после trim).
-- Двойной слэш/trailing slash/регистр в URL, redirect-петли, открытый редирект (`?next=` на внешний домен).
-- Сломанная картинка → alt/плейсхолдер; недогруженный шрифт (FOUT/FOIT); заблокированный трекер не роняет UI.
-- Optimistic update + ошибка бэка → откат UI; частичный сбой составной операции → откат всех шагов.
-- Offline в момент сабмита (данные не теряются) и восстановление сети без дублей.
-- Серверная валидация в обход клиентской (правка payload в DevTools проходит мимо UI-проверок).
-- Числа > 2^53 (id как string, потеря точности в JS); деньги в float (потеря копеек).
-- Пустой массив vs `null` vs отсутствие поля в ответе — UI обрабатывает все три; неизвестное enum-значение → fallback без краша.
-- prefers-reduced-motion / prefers-color-scheme / forced-colors; pinch-to-zoom не заблокирован.
-- Тач: залипший hover, hover-only функционал недоступен по тапу, тач-таргеты <44px.
-- CSV-инъекция при экспорте (`=`/`+`/`@`); файлы (double-extension, magic bytes, SVG с XSS, ZIP-бомба).
-- Consumer/poison-message блокирует партицию; вебхук без подписи/дедупа; cron при DST (пропуск/дубль).
-- Cache-ключ без tenant/locale/прав (утечка чужих данных через общий кэш); stale после write.
+- Double click / double form submit / button spam during loading; guard via disable + idempotency on the backend.
+- Browser Back/Forward, F5 mid-flow, direct deeplink, opening in a new tab, manual URL edits.
+- Session expiring mid-action (the next action catches a 401 → re-login preserving intent); logout in another tab.
+- Request races (latest-wins, out-of-order, cancel on filter change); debounce + abort.
+- Handler self-cancellation (the button reacts, but the final state ≠ the label's promise): a second call cancels the first via its side effect (set a flag → the next store setter reset it); `useEffect`/tab switch resets what was just set; "Save/Delete/Send" only validates or sets a flag without an API call; the `if(state)` branch is always false. Verify the final state across all layers (UI ↔ store/storage ↔ network), not the mere fact of a reaction.
+- Empty list / exactly 1 item / 1000+ items (rendering, pagination, virtualization, perf).
+- Emoji (ZWJ sequences) / RTL / special characters / surrogate pairs; grapheme clusters in length counters.
+- Zoom 200% (reflow into a single column without horizontal scroll), enlarged system font.
+- DST / timezones / clock skew / Feb 29 / day boundary / midnight UTC vs local / "5 minutes ago" never in the future.
+- IDOR (someone else's id in the request while the button is hidden in the UI), vertical escalation (admin endpoint), mass assignment.
+- Paste (trim/format stripping) / autofill not triggering live validation / drag-n-drop of text.
+- Multi-tab (logout/change in tab A → reaction in tab B), concurrent editing (lost update).
+- Idempotency (a repeat after a timeout/retry does not create a duplicate payment/order); idempotency-key per action, not per retry.
+- Whitespace only / NBSP / zero-width in a required field (= empty after trim).
+- Double slash/trailing slash/letter case in the URL, redirect loops, open redirect (`?next=` to an external domain).
+- Broken image → alt/placeholder; font that fails to load (FOUT/FOIT); a blocked tracker does not take down the UI.
+- Optimistic update + backend error → UI rollback; partial failure of a composite operation → roll back all steps.
+- Offline at the moment of submit (data is not lost) and network recovery without duplicates.
+- Server-side validation with the client bypassed (payload edited in DevTools slips past UI checks).
+- Numbers > 2^53 (id as string, precision loss in JS); money in float (losing cents).
+- Empty array vs `null` vs missing field in the response — the UI handles all three; unknown enum value → fallback without a crash.
+- prefers-reduced-motion / prefers-color-scheme / forced-colors; pinch-to-zoom not blocked.
+- Touch: stuck hover, hover-only functionality unreachable by tap, tap targets <44px.
+- CSV injection on export (`=`/`+`/`@`); files (double extension, magic bytes, SVG with XSS, ZIP bomb).
+- Consumer/poison message blocking a partition; webhook without signature/dedup; cron during DST (skip/duplicate).
+- Cache key without tenant/locale/permissions (leaking others' data via a shared cache); stale after write.

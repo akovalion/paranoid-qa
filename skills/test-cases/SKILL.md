@@ -1,202 +1,202 @@
 ---
 name: test-cases
-description: Составление тест-кейсов по best practice QA с экспортом в CSV для импорта в Zephyr Scale (Option 1) или созданием напрямую через MCP вашей TMS. Используй, когда пользователь просит сгенерировать, составить или подготовить тест-кейсы, чек-листы или CSV для импорта в TMS.
+description: Test case authoring per QA best practices, with CSV export for Zephyr Scale import (Option 1) or direct creation via your TMS MCP. Use when the user asks to generate, write, or prepare test cases, checklists, or CSV for TMS import.
 allowed-tools:
-  - Read
-  - Write
-  - AskUserQuestion
+  — Read
+  — Write
+  — AskUserQuestion
 ---
 
-Составь тест-кейсы по правилам ниже. Сначала готовь их в md-файле для валидации, затем — CSV для импорта (или прямое создание через MCP, раздел 13).
+Write test cases per the rules below. First prepare them in an md file for validation, then produce the CSV for import (or create directly via MCP, section 13).
 
-Учитывай логику требований и существующие макеты. При расхождении между макетом и реализацией — фиксируй вопросом аналитику.
+Account for the requirements logic and existing mockups. On mismatch between mockup and implementation — log a question for the analyst.
 
-1. Формат тест-кейсов:
-   - Наименование — короткое и понятное (объект: суть проверки, как «Открытие
-     календаря», «Пагинация списка»). Без URL, селекторов и технических деталей
-     в названии (им место в шагах/objective). Не пиши в названии TC-(номер ТК).
-   - Предусловия выполнения тест-кейса (если применимо)
-   - Шаги (максимально подробные, атомарные)
-   - Ожидаемый результат (указывай только после логически значимых шагов)
-   - Приоритет (High / Normal / Low)
-   - Тип (UI / Functionality / Integration — или значения, принятые в вашем проекте)
-   - Reference (ссылка или название макета из Figma/PDF, конкретный элемент) - если применимо
-   - Использовать ТОЧНЫЕ названия полей, кнопок, заголовков,
-     плейсхолдеров как в реализации/макетах/ТЗ
-   - Если в макете поле называется «Кем выдан?» — писать «Кем выдан?»,
-     не «Кем выдан ДУЛ»
-   - Проверять: двоеточия, вопросительные знаки, регистр,
-     пробелы в лейблах
-   - Если названия в требованиях и макетах расходятся —
-     фиксировать как вопрос для аналитика
+1. Test case format:
+   — Name — short and clear (object: essence of the check, e.g. "Calendar
+     opening", "List pagination"). No URLs, selectors, or technical details
+     in the name (they belong in steps/objective). Do not put TC-(test case number) in the name.
+   — Test case preconditions (if applicable)
+   — Steps (maximally detailed, atomic)
+   — Expected result (state it only after logically significant steps)
+   — Priority (High / Normal / Low)
+   — Type (UI / Functionality / Integration — or the values used in your project)
+   — Reference (link or mockup name from Figma/PDF, specific element) — if applicable
+   — Use the EXACT names of fields, buttons, headings,
+     placeholders as in the implementation/mockups/spec
+   — If the mockup labels a field "Issued by?" — write "Issued by?",
+     not "Issued by (ID document)"
+   — Check: colons, question marks, letter case,
+     spaces in labels
+   — If names differ between requirements and mockups -
+     log it as a question for the analyst
 
-2. Шаги:
-   - Каждый шаг — одно действие
-   - Обязательно указывать:
-     • "Кликнуть по кнопке «Название кнопки»"
-     • "Ввести значение «…» в поле «Название поля»"
-     • "Выбрать значение «…» из выпадающего списка «Название»"
-     • "Навести курсор на элемент «…»"
-     • "Открыть страницу по URL …"
-   - Избегай ссылок-сокращений:
-     ❌ «аналогично», «повторить шаги», «как в предыдущем тест-кейсе»,
-     ❌ «выбрать значения согласно названию ТК»
-     Каждый шаг должен читаться независимо от других ТК.
+2. Steps:
+   — One action per step
+   — Always spell out:
+     • "Click the "Button name" button"
+     • "Enter the value "…" in the "Field name" field"
+     • "Select the value "…" from the "Name" dropdown"
+     • "Hover over the "…" element"
+     • "Open the page at URL …"
+   — Avoid shorthand references:
+     ❌ "similarly", "repeat the steps", "as in the previous test case",
+     ❌ "select values per the test case name"
+     Each step must read independently of other test cases.
 
-3. Ожидаемый результат:
-   - По умолчанию — отдельный Expected Result после значимых шагов, а не один общий в конце
-   - Указывай результат после шагов, где:
-     • происходит валидация
-     • меняется состояние UI
-     • отправляются данные
-     • отображается ошибка/сообщение и тд
-   - Формулировка:
-     • "Система отображает…"
-     • "Поле подсвечивается ошибкой…"
-     • "Кнопка становится активной/неактивной…" и тд
-   - Источник ОР — требования/ТЗ, затем макеты. Реализация/стенд — НЕ источник ОР:
-     из реализации берутся только точные названия элементов, а ожидаемое
-     ПОВЕДЕНИЕ — из требований и макетов. Если реализация расходится
-     с требованиями — это баг или вопрос аналитику, а не основа для ОР.
+3. Expected result:
+   — By default — a separate Expected Result after significant steps, not one shared block at the end
+   — State the result after steps where:
+     • validation occurs
+     • UI state changes
+     • data is submitted
+     • an error/message is displayed, etc.
+   — Wording:
+     • "The system displays…"
+     • "The field is highlighted with an error…"
+     • "The button becomes enabled/disabled…", etc.
+   — Source of the expected result — requirements/spec, then mockups. The implementation/environment is NOT a source:
+     take only exact element names from the implementation; the expected
+     BEHAVIOR comes from requirements and mockups. If the implementation
+     diverges from the requirements — that is a bug or a question for the analyst, not a basis for the expected result.
 
-4. Покрытие:
-   Включай в покрытие:
-   - Позитивные сценарии
-   - Негативные сценарии
-   - Граничные значения
-   Не дублируй одинаковые проверки без причины.
-   - UI-состояния:
+4. Coverage:
+   Include in coverage:
+   — Positive scenarios
+   — Negative scenarios
+   — Boundary values
+   Do not duplicate identical checks without reason.
+   — UI states:
      • default
      • hover
      • focus
      • disabled
      • error
-     • loading (если применимо) и тд
-   - Поведение при:
-     • перезагрузке страницы
-     • навигации
-     • потере сети (если есть интеграции) и тд
-   - Должна быть качественная оптимизация, но не терять качество и покрытие
-   - Проверки производятся на разрешениях (если задача связана с UI/адаптивом):
+     • loading (if applicable), etc.
+   — Behavior on:
+     • page reload
+     • navigation
+     • network loss (if there are integrations), etc.
+   — Optimize the set thoughtfully, but never at the cost of quality and coverage
+   — Run checks at these resolutions (if the task involves UI/responsive layout):
      Desktop: 1920x1080, 1536x864, 2560x1440
      Mobile: 414x896, 360x800, 393x873, 430x926
-   - Повторное использование формы:
-     • работоспособность после успешной отправки и возврата
-       (кнопка «Отправить ещё» и т.п.)
-     • корректность всех полей и списков при повторном заполнении
-   - Последовательная валидация:
-     • смена типа ошибки при изменении ввода
-       (например: ввод латиницы → стирание → ошибка должна
-       смениться с «Только кириллица» на «Обязательное поле»)
-     • независимость ошибок между полями
-       (ошибка в поле А не влияет на текст ошибки в поле Б)
-   - Точные тексты ошибок:
-     • указывать ожидаемый текст ошибки в Expected Result,
-       а не абстрактное «отображается ошибка»
-       Если текст ошибки неизвестен - указывать ожидаемый смысл
-   - Если поле имеет дополнительные UI-элементы
-     (кнопка «Нет отчества», тогл, иконка очистки) -
-     проверять их наличие/отсутствие и поведение отдельно
+   — Form reuse:
+     • functionality after a successful submit and return
+       (a "Submit another" button, etc.)
+     • correctness of all fields and lists on repeat fill
+   — Sequential validation:
+     • error type switching as input changes
+       (e.g.: enter digits → clear the input → the error must
+       switch from "Letters only" to "Required field")
+     • error independence between fields
+       (an error in field A does not affect the error text in field B)
+   — Exact error texts:
+     • state the expected error text in Expected Result,
+       not an abstract "an error is displayed"
+       If the error text is unknown — state the expected meaning
+   — If a field has extra UI elements
+     (a "No middle name" button, a toggle, a clear icon) -
+     verify their presence/absence and behavior separately
 
-5. Сверка с реализацией:
-   - При наличии макетов/скриншотов — сверять тест-кейсы с ними
-   - Расхождения фиксировать как баги или вопросы
-   - Если поле по требованиям «необязательное»,
-     но в реализации требует ввода — это баг
+5. Verification against the implementation:
+   — When mockups/screenshots exist — verify test cases against them
+   — Log discrepancies as bugs or questions
+   — If a field is "optional" per requirements
+     but the implementation requires input — that is a bug
 
-6. Интеграции:
-   Если есть API / внешние сервисы:
-   - Проверять:
-     • корректную отправку параметров
-     • обработку ошибок 4xx / 5xx
-     • отсутствие падений UI и тд
-   - Указывать это в шагах и Expected Result
+6. Integrations:
+   If there are APIs / external services:
+   — Verify:
+     • correct parameter submission
+     • 4xx / 5xx error handling
+     • no UI crashes, etc.
+   — Reflect this in the steps and Expected Result
 
-7. Структура:
-   - Порядок ТК: сначала High, затем Normal, затем Low
-   - Внутри каждой группы сначала позитивные сценарии, затем негативные
-   - Группируй логически (Отображение / Валидация / Навигация / Негатив)
-   - Разделяй Desktop и Mobile, если есть адаптив
-   - Целевые браузеры — по требованиям проекта; типовой минимум:
+7. Structure:
+   — Test case order: High first, then Normal, then Low
+   — Within each group, positive scenarios first, then negative
+   — Group logically (Display / Validation / Navigation / Negative)
+   — Split Desktop and Mobile if there is responsive layout
+   — Target browsers — per project requirements; typical minimum:
      Chrome (Desktop + Android), Safari (iOS)
-   - Для Mobile-only ТК добавляй префикс `[Mobile]` в название
+   — For Mobile-only test cases, prefix the name with `[Mobile]`
 
-8. Стиль:
-   - Деловой, QA-стиль
-   - Без воды
-   - Четко, однозначно, воспроизводимо
+8. Style:
+   — Businesslike, QA style
+   — No filler
+   — Clear, unambiguous, reproducible
 
-9. Результат:
-   - Тест-кейсы должны быть готовы к импорту в TMS (CSV)
-   - Если подключён MCP вашей TMS (например, Zephyr Scale MCP с инструментом
-     create_test_case) — после валидации md-файла предложи пользователю создать
-     ТК напрямую вместо ручного импорта CSV; CSV остаётся как fallback
-   - Без сокращений и неоднозначных формулировок
-   - Имя файлов: `{TASK_KEY}_test_cases.md` и `{TASK_KEY}_test_cases.csv`
-     (например: `PROJ-1234_test_cases.md`). Сохранять в текущую рабочую директорию.
+9. Output:
+   — Test cases must be ready for TMS import (CSV)
+   — If your TMS MCP is connected (e.g. Zephyr Scale MCP with the
+     create_test_case tool) — after validating the md file, offer to create
+     the test cases directly instead of manual CSV import; CSV remains a fallback
+   — No abbreviations or ambiguous wording
+   — File names: `{TASK_KEY}_test_cases.md` and `{TASK_KEY}_test_cases.csv`
+     (e.g. `PROJ-1234_test_cases.md`). Save to the current working directory.
 
-10. Экспорт для Zephyr Scale
-- Генерировать CSV в формате "Option 1" (Steps):
-  Колонки строго: Name, Status, Step, Expected Result, Preconditions, Priority, Type
-- Правило строк:
-  1 строка CSV = 1 шаг
-  Для первого шага тест-кейса заполнять Name и Status
-  Для последующих шагов этого же тест-кейса оставлять Name и Status пустыми
-- Expected Result заполнять для каждого шага (в той же строке)
-- Кодировка: UTF-8
-- Разделитель: запятая (,)
-- Все поля экранировать кавычками (") при необходимости (запятые/переносы/кавычки)
-- Не использовать переменные/плейсхолдеры вида {…} в CSV (писать текстом)
+10. Export for Zephyr Scale
+- Generate the CSV in the "Option 1" (Steps) format:
+  Columns strictly: Name, Status, Step, Expected Result, Preconditions, Priority, Type
+- Row rule:
+  1 CSV row = 1 step
+  For the first step of a test case, fill Name and Status
+  For subsequent steps of the same test case, leave Name and Status empty
+- Fill Expected Result for each step (on the same row)
+- Encoding: UTF-8
+- Delimiter: comma (,)
+- Escape all fields with quotes (") as needed (commas/line breaks/quotes)
+- Do not use variables/placeholders like {…} in the CSV (write them out as text)
 
-11. Анализ требований и уточнения
+11. Requirements analysis and clarifications
 
-Различай два типа вопросов по неоднозначностям:
+Distinguish two types of questions about ambiguities:
 
-**Критичные для генерации** — без ответа невозможно корректно составить ТК (противоречие в макете и описании, неясный happy path, неизвестное поведение валидации, отсутствует ключевой сценарий):
-- Задавай напрямую через `AskUserQuestion` ДО начала генерации
-- Группируй связанные вопросы в один вызов (макс. 4 вопроса за раз)
-- Если уточнения по задаче уже пройдены ранее в этом разговоре (контекст собран из трекера, вопросы заданы) — переходи к генерации без повторных вопросов
+**Critical for generation** — test cases cannot be written correctly without an answer (contradiction between mockup and description, unclear happy path, unknown validation behavior, missing key scenario):
+- Ask directly via `AskUserQuestion` BEFORE starting generation
+- Group related questions into one call (max 4 questions at a time)
+- If clarifications for the task were already covered earlier in this conversation (context gathered from the issue tracker, questions asked) — proceed to generation without repeat questions
 
-**Для аналитика** — требуют бизнес-контекста, недоступного пользователю в чате (точные тексты ошибок из API, тайминги, политики, особенности интеграций):
-- Собирай в отдельный список «Вопросы для аналитика» в конце ответа
-- После того как пользователь принесёт ответы — актуализируй ТК
+**For the analyst** — require business context unavailable to the user in chat (exact error texts from the API, timings, policies, integration specifics):
+- Collect them in a separate "Questions for the analyst" list at the end of the reply
+- Once the user brings the answers — update the test cases
 
-12. Оценка полноты покрытия:
-   - В конце дай краткую оценку: что покрыто, что осознанно не покрыто и почему
+12. Coverage completeness assessment:
+   — At the end, give a brief assessment: what is covered, what is deliberately not covered, and why
 
-13. Прямое создание в TMS через MCP (если подключён):
-   - **Границы.** Если проект в TMS общий для нескольких команд — все операции
-     только внутри дерева папок своей команды; чужие корни не менять и не
-     выводить в отчёты. Зафиксируйте свою корневую папку в `CLAUDE.md` проекта.
-   - Перед созданием ВСЕГДА получай актуальное дерево папок (`get_folders`
-     или аналог) — структура живая, подпапки добавляются; не работай по
-     снимку из памяти.
-   - Перед генерацией новых ТК сверь существующее покрытие целевой папки
-     (поиск ТК по папке): генерируй только недостающее; пересечение
-     с существующим ТК — повод актуализировать его через update,
-     а не создавать дубликат.
-   - Пути папок использовать ДОСЛОВНО как вернул API: имена могут содержать
-     трейлинг-пробелы. При создании новых папок избегать спецсимволов
-     (кавычки, запятые) и смешения алфавитов в именах — они часто ломают
-     поиск по API.
-   - Папку выбирай по функционалу фичи; для новой фичи без своей подпапки —
-     предложи создать папку или уточни у пользователя.
-   - Правила контента те же, что для CSV: 1 шаг = 1 description,
-     expectedResult после значимых шагов (правила выше); ОР формулировать
-     «Система отображает…».
-   - Привязывай ТК к тикету трекера (issue_links или аналог) — всегда,
-     если TMS это поддерживает.
-   - Учитывай, что TMS может перезаписывать статус при создании (напр. всегда
-     «Draft»); перевод в «Approved» — после ревью и ответов аналитика через update.
-   - md-файл с ТК остаётся обязательным этапом валидации ДО создания в TMS;
-     CSV (раздел 10) — fallback, если MCP недоступен.
-   - Прогоны по задаче (по запросу пользователя): создать test run → статусы
-     по ходу прогона (Pass/Fail/Blocked). Статус Fail сопровождай комментарием
-     с причиной/ссылкой на дефект.
-   - **Точка входа — первым шагом ТК открывать страницу объекта проверки**
-     («Открыть страницу по URL …»), чтобы было видно где проверять. Для ТК
-     с особым предусловием (экран успеха, заполненная форма) URL указывать
-     в precondition.
-   - Если TMS рендерит описания как HTML (напр. Zephyr Scale DC) — URL
-     оформлять кликабельной ссылкой `<a href="https://...">https://...</a>`,
-     чтобы ссылка в ТК была кликабельна.
+13. Direct creation in the TMS via MCP (if connected):
+   — **Boundaries.** If the TMS project is shared across teams — all operations
+     stay within your team's folder tree; do not modify other teams' roots or
+     include them in reports. Record your root folder in the project's `CLAUDE.md`.
+   — Before creating, ALWAYS fetch the current folder tree (`get_folders`
+     or equivalent) — the structure is live, subfolders get added; do not
+     work from a memorized snapshot.
+   — Before generating new test cases, check the target folder's existing
+     coverage (search test cases by folder): generate only what is missing;
+     overlap with an existing test case is a reason to update it,
+     not to create a duplicate.
+   — Use folder paths VERBATIM as returned by the API: names may contain
+     trailing spaces. When creating new folders, avoid special characters
+     (quotes, commas) and mixed alphabets in names — they often break
+     API search.
+   — Pick the folder by the feature's functionality; for a new feature without
+     its own subfolder — offer to create one or ask the user.
+   — Content rules are the same as for CSV: 1 step = 1 description,
+     expectedResult after significant steps (rules above); word expected
+     results as "The system displays…".
+   — Link test cases to the issue tracker ticket (issue_links or equivalent) — always,
+     if the TMS supports it.
+   — Note that the TMS may override the status on creation (e.g. always
+     "Draft"); move to "Approved" after review and analyst answers, via update.
+   — The md file with the test cases remains a mandatory validation stage BEFORE
+     creation in the TMS; CSV (section 10) is the fallback if MCP is unavailable.
+   — Runs for the task (on user request): create a test run → set statuses
+     as the run progresses (Pass/Fail/Blocked). Accompany a Fail status with a comment
+     stating the cause/a link to the defect.
+   — **Entry point — the first step of a test case opens the page under test**
+     ("Open the page at URL …"), so it is clear where to verify. For test cases
+     with a special precondition (success screen, pre-filled form), put the URL
+     in the precondition.
+   — If the TMS renders descriptions as HTML (e.g. Zephyr Scale DC) — format
+     the URL as a clickable link `<a href="https://...">https://...</a>`,
+     so the link in the test case is clickable.

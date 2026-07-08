@@ -1,44 +1,44 @@
-## 7. Fan-out: параллельный прогон
+## 7. Fan-out: parallel run
 
-Дробление дотошного прогона по **осям контроля** вместо одного линейного прохода. Каждую ось ведёт отдельный субагент (`Agent`) со свежим контекстом и одной узкой задачей — придирчивее, чем один проход, где к концу длинного флоу внимание «замыливается». Запускается оркестратором (main loop) из этого скилла.
+Split the meticulous run across **control axes** instead of a single linear pass. Each axis is driven by a separate subagent (`Agent`) with fresh context and one narrow task — more exacting than a single pass where, by the end of a long flow, attention dulls. Launched by the orchestrator (main loop) from this skill.
 
-### 7.1 Когда применять
-- **Да:** длинный многошаговый флоу (визард, форма с ветвлением), полный регресс экрана, сверка прод/тест, E2E релиза, экран с большим числом состояний/элементов.
-- **Нет (линейно дешевле и достаточно):** одна простая страница, быстрый smoke, проверка/воспроизведение одного бага, повторный прогон узкого участка. Fan-out дороже по токенам (N агентов × контекст) — оправдан покрытием, не применять везде подряд.
+### 7.1 When to apply
+- **Yes:** long multi-step flow (wizard, form with branching), full screen regression, prod/test comparison, release E2E, a screen with many states/elements.
+- **No (linear is cheaper and sufficient):** a single simple page, quick smoke, verifying/reproducing one bug, re-running a narrow section. Fan-out costs more tokens (N agents × context) — justified by coverage, do not apply it everywhere.
 
-### 7.2 Принцип: собирай последовательно, анализируй параллельно
-- **Браузер один.** MCP-серверы (Playwright/Chrome DevTools) session-scoped — один инстанс браузера на сессию. Субагенты НЕ водят браузер параллельно: будет конфликт навигации/состояния. Браузер трогает только оркестратор.
-- **Граница:** действие в браузере и сбор артефактов = оркестратор (последовательно); суждение по собранному артефакту = субагент (параллельно). Субагенты получают пути к файлам-артефактам и читают их (`Read`), браузер не вызывают.
+### 7.2 Principle: collect sequentially, analyze in parallel
+- **One browser.** MCP servers (Playwright/Chrome DevTools) are session-scoped — one browser instance per session. Subagents do NOT drive the browser in parallel: navigation/state conflicts will follow. Only the orchestrator touches the browser.
+- **Boundary:** browser action and artifact collection = orchestrator (sequential); judgment on a collected artifact = subagent (parallel). Subagents receive paths to the artifact files and read them (`Read`), never call the browser.
 
-### 7.3 Шаги
-1. **Сбор (оркестратор, последовательно).** Пройти экраны/состояния, сложить артефакты в рабочую папку прогона (`/tmp/<run>/`): скриншоты `screen-N.png`, дамп DOM и computed-стилей `dom-N.json`, лог сети/HAR `network.json`, извлечённые тексты `texts.md`; при кросс-браузере — парные артефакты Chromium/WebKit. Транзиентные и интерактивные состояния (hover/focus/disabled/loading) снимать эмпирично, как требует доктрина.
-2. **Fan-out (`Agent`, параллельно).** Запустить субагентов одним сообщением (несколько вызовов `Agent` сразу = параллельный старт), по одному на ось. Каждому — бриф (§7.5).
-3. **Синтез (оркестратор, без агента).** Собрать выводы, дедупить (визуал и контраст часто репортят один серый), проставить/нормализовать severity, сопоставить с AC, отсеять дубли и не-дефекты.
-4. **Выход.** Сводный список дефектов с пруфами → баг-репорты (скилл `bug-report` из этого пака, если установлен, иначе — структура из `artifacts.md`); непокрытое и `Blocked` — явно с причиной.
+### 7.3 Steps
+1. **Collection (orchestrator, sequential).** Walk the screens/states, store artifacts in the run's working folder (`/tmp/<run>/`): screenshots `screen-N.png`, DOM and computed-style dump `dom-N.json`, network log/HAR `network.json`, extracted texts `texts.md`; for cross-browser — paired Chromium/WebKit artifacts. Capture transient and interactive states (hover/focus/disabled/loading) empirically, as the doctrine requires.
+2. **Fan-out (`Agent`, parallel).** Launch the subagents in a single message (several `Agent` calls at once = parallel start), one per axis. Give each a brief (§7.5).
+3. **Synthesis (orchestrator, no agent).** Collect the findings, dedup (visual and contrast often report the same gray), set/normalize severity, map to AC, filter out duplicates and non-defects.
+4. **Output.** Summary defect list with proofs → bug reports (the `bug-report` skill from this pack if installed, otherwise the structure from `artifacts.md`); uncovered areas and `Blocked` — explicitly, with reasons.
 
-### 7.4 Оси (дефолт — кастомизируй под задачу)
-| Ось (субагент) | Что ищет | Артефакт |
+### 7.4 Axes (default — customize per task)
+| Axis (subagent) | What it looks for | Artifact |
 |---|---|---|
-| Визуал + токены | один ли «чёрный»/«серый», шрифт, отступы, размеры заголовков; дифф однотипных элементов между экранами | скрины + computed-стили |
-| Тексты vs макет | пропущенные/изменённые фразы, вторые предложения подзаголовков, overflow/переносы | `texts.md` + источник правды |
-| Формы + payload | тело сабмита на `[object Object]`/пустые/кривые поля; статусы ВСЕХ запросов; BVA/негатив | `network.json` + payload'ы |
-| Состояния элементов | rest/hover/focus/active/disabled/loading каждого интерактива; tap-таргеты на мобиле | скрины + computed-стили состояний |
-| Кросс-браузер | баги, видимые только в WebKit или только в Chromium | парные артефакты |
+| Visual + tokens | whether there is a single "black"/"gray", font, spacing, heading sizes; diff of same-type elements across screens | screenshots + computed styles |
+| Texts vs mockup | missing/altered phrases, second sentences of subheadings, overflow/wrapping | `texts.md` + source of truth |
+| Forms + payload | submit body for `[object Object]`/empty/malformed fields; statuses of ALL requests; BVA/negative | `network.json` + payloads |
+| Element states | rest/hover/focus/active/disabled/loading of every interactive element; tap targets on mobile | screenshots + computed styles of states |
+| Cross-browser | bugs visible only in WebKit or only in Chromium | paired artifacts |
 
-Набор меняется под задачу: статичный лендинг — убрать «формы», добавить «адаптив» (канонические вьюпорты — §2.3 `frontend.md`); чистый бэк — fan-out по эндпоинтам/ресурсам вместо UI-осей.
+The set adapts to the task: static landing page — drop "forms", add "responsive" (canonical viewports — §2.3 of `frontend.md`); pure backend — fan out across endpoints/resources instead of UI axes.
 
-### 7.5 Бриф субагенту (передать каждому)
-- Пути к нужным артефактам — только релевантное оси, не весь дамп.
-- Источник правды для оси: AC/ТЗ/описание макета; при конфликте — приоритет (AC → ТЗ → Figma → прод).
-- Доктрина доказательности: Pass/Fail только по артефакту; не уверен / не видно → «не проверено», не догадка.
-- Жёсткий формат вывода (§7.6) — чтобы синтез был механическим.
-- Граница: браузер не вызывать, работать только по файлам.
+### 7.5 Subagent brief (pass to each)
+- Paths to the required artifacts — only what is relevant to the axis, not the whole dump.
+- Source of truth for the axis: AC/spec/mockup description; on conflict — priority (AC → spec → Figma → prod).
+- Evidence doctrine: Pass/Fail only from an artifact; not sure / not visible → "not verified", not a guess.
+- Strict output format (§7.6) — so synthesis stays mechanical.
+- Boundary: do not call the browser, work only from files.
 
-### 7.6 Формат вывода субагента
-Список находок, каждая: `{ ось, экран/элемент, ожидание (+источник), факт (+пруф: путь к скрину / строка сети / дифф стиля), severity, тип: дефект | вопрос к требованиям | не воспроизводится }`. Без артефакта-пруфа находка не засчитывается.
+### 7.6 Subagent output format
+A list of findings, each: `{ axis, screen/element, expected (+source), actual (+proof: screenshot path / network entry / style diff), severity, type: defect | question to requirements | not reproducible }`. Without a proof artifact a finding does not count.
 
-### 7.7 Дисциплина
-- Браузер не параллелить — субагенты только анализируют собранное.
-- Доказательность не теряется при делегировании: пруф едет с каждой находкой.
-- Дедуп обязателен на синтезе, иначе один дефект придёт от 2–3 осей.
-- Токен-стоимость осознанная: число осей — под задачу, не «5 всегда».
+### 7.7 Discipline
+- Never parallelize the browser — subagents only analyze the collected artifacts.
+- Evidence discipline is not lost in delegation: proof travels with every finding.
+- Dedup is mandatory at synthesis, otherwise one defect arrives from 2-3 axes.
+- Token cost is deliberate: the number of axes fits the task, not "always 5".

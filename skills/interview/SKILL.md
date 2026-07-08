@@ -1,77 +1,77 @@
 ---
 name: interview
-description: Структурированный сбор требований через серию вопросов. Используй, когда задача описана устно/неформально (не из тикета трекера) и перед началом работы нужно прояснить scope, AC и edge cases.
+description: Structured requirements gathering through a series of questions. Use when the task is described verbally/informally (not from an issue tracker ticket) and scope, AC, and edge cases need clarifying before work starts.
 allowed-tools:
-  - AskUserQuestion
-  - Write
+  — AskUserQuestion
+  — Write
 ---
 
-# Interview: сбор требований через вопросы
+# Interview: requirements gathering through questions
 
-Помоги пользователю структурировать неформальное описание задачи в полные требования, готовые к передаче в скиллы `test-cases` или `testing`.
+Help the user turn an informal task description into complete requirements ready to hand off to the `test-cases` or `testing` skills.
 
-## Когда применять
-- Задача описана устно или общими словами, без тикета
-- Нет AC, нет макетов, нет чёткого scope
-- Пользователь сам не уверен, что именно тестировать/автоматизировать
+## When to apply
+- The task is described verbally or in general terms, without a ticket
+- No AC, no mockups, no clear scope
+- The user is unsure what exactly to test/automate
 
-Если задача уже из трекера (Jira и т.п.) с полным описанием — этот скилл не нужен: собери контекст прямо из тикета (через MCP трекера: описание, комментарии, вложения, связанные задачи) и передай в `test-cases`.
+If the task already comes from an issue tracker (Jira etc.) with a full description — this skill is not needed: gather context straight from the ticket (via the tracker's MCP: description, comments, attachments, linked issues) and hand off to `test-cases`.
 
-## Процесс
+## Process
 
-**Раунд 1: scope и контекст.** Задай 3-4 вопроса через `AskUserQuestion`:
-- Что именно проверяем (фича, страница, элемент)
-- Где это живёт (URL, экран, путь в навигации)
-- Тип задачи (новая функциональность / регресс / баг)
-- Платформы (desktop / mobile / оба)
+**Round 1: scope and context.** Ask 3-4 questions via `AskUserQuestion`:
+- What exactly is being checked (feature, page, element)
+- Where it lives (URL, screen, navigation path)
+- Task type (new functionality / regression / bug)
+- Platforms (desktop / mobile / both)
 
-**Раунд 2: поведение и AC.** На основе ответов 1-го раунда:
-- Happy path — какое поведение считается корректным
-- Edge cases — что важно проверить из негативных сценариев
-- Состояния UI (loading, error, empty, disabled) — если применимо
-- Интеграции — есть ли API / внешние сервисы
+**Round 2: behavior and AC.** Based on the round 1 answers:
+- Happy path — what behavior counts as correct
+- Edge cases — which negative scenarios matter
+- UI states (loading, error, empty, disabled) — if applicable
+- Integrations — any APIs / external services
 
-**Раунд 3: уточнения по оставшимся пробелам.** Только если после 1-2 раундов остались критичные пробелы. Группируй связанные вопросы.
+**Round 3: clarifications on remaining gaps.** Only if critical gaps remain after rounds 1-2. Group related questions.
 
-Максимум 3 раунда. Если требования всё ещё неполные — зафиксируй пробелы как «Вопросы для аналитика/PM» и работай с тем, что есть.
+Maximum 3 rounds. If the requirements are still incomplete — log the gaps as "Questions for the analyst/PM" and work with what you have.
 
-## Формат вывода
+## Output format
 
-После завершения опроса собери структурированный summary:
+Once the interview is done, assemble a structured summary:
 
 ```markdown
-# Требования: <короткое название задачи>
+# Requirements: <short task name>
 
-## Контекст
-- Тип: <новая фича / регресс / баг>
-- Платформы: <desktop / mobile / оба>
-- URL / расположение: <…>
+## Context
+- Type: <new feature / regression / bug>
+- Platforms: <desktop / mobile / both>
+- URL / location: <…>
 
 ## Scope
-<что именно проверяем, кратко>
+<what exactly is being checked, briefly>
 
 ## Acceptance Criteria
 - <AC 1>
 - <AC 2>
 
-## Сценарии
-**Happy path:** <описание>
+## Scenarios
+**Happy path:** <description>
 
 **Edge cases:**
 - <case 1>
 - <case 2>
 
-## Интеграции
-<API, внешние сервисы — если есть>
+## Integrations
+<APIs, external services — if any>
 
-## Открытые вопросы для аналитика/PM
-- <вопрос 1>
+## Open questions for the analyst/PM
+- <question 1>
 ```
 
-Сохрани summary в md-файл (например, `requirements_<task_name>.md` в текущей рабочей директории) и предложи пользователю передать его в `test-cases` или `testing`.
+Save the summary to an md file (e.g. `requirements_<task_name>.md` in the current working directory) and offer to hand it off to `test-cases` or `testing`.
 
-## Что предпочитать
-- Лучше 4 точных вопроса, чем 10 шаблонных
-- Привязывай вопросы к ответам предыдущего раунда, а не задавай по чек-листу
-- Если пользователь отвечает «не знаю» — фиксируй как вопрос для аналитика, не дави
-- В вопросах используй конкретные варианты ответа (опции AskUserQuestion), а не открытые формулировки
+## What to prefer
+- 4 precise questions beat 10 boilerplate ones
+- Tie questions to the previous round's answers instead of running down a checklist
+- If the user answers "don't know" — log it as a question for the analyst, do not push
+- Use concrete answer options in questions (AskUserQuestion options), not open-ended wording

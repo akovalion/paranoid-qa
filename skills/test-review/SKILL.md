@@ -1,6 +1,6 @@
 ---
 name: test-review
-description: Ревью только что написанных или изменённых автотестов на соответствие best practices TypeScript + Playwright (по официальной документации) и конвенциям вашего проекта. Используй по /test-review либо после написания/правки любого теста (UI E2E, API, UI+API, моки, visual, mobile) или Page Object/фикстуры/констант — до коммита. Выдаёт приоритизированный список замечаний с severity, привязкой к строкам и готовыми фиксами.
+description: Review of just-written or modified autotests against TypeScript + Playwright best practices (per official documentation) and your project's conventions. Use via /test-review or after writing/editing any test (UI E2E, API, UI+API, mocks, visual, mobile) or a Page Object/fixture/constants — before commit. Produces a prioritized list of findings with severity, line references, and ready-made fixes.
 allowed-tools:
   - Read
   - Grep
@@ -10,148 +10,148 @@ allowed-tools:
   - AskUserQuestion
 ---
 
-# Ревью автотестов (TypeScript + Playwright)
+# Autotest review (TypeScript + Playwright)
 
-Проверь только что написанный или изменённый тест-код на соответствие best practices и выдай приоритизированный список замечаний с фиксами. Источник правил — **официальная документация Playwright** ([best-practices](https://playwright.dev/docs/best-practices), [locators](https://playwright.dev/docs/locators), [test-assertions](https://playwright.dev/docs/test-assertions)) и [TypeScript](https://playwright.dev/docs/test-typescript) + конвенции конкретного проекта.
+Check just-written or modified test code against best practices and produce a prioritized list of findings with fixes. Rule source — the **official Playwright documentation** ([best-practices](https://playwright.dev/docs/best-practices), [locators](https://playwright.dev/docs/locators), [test-assertions](https://playwright.dev/docs/test-assertions)) and [TypeScript](https://playwright.dev/docs/test-typescript) + the specific project's conventions.
 
-> **Источник правды по проекту** — его корневой `CLAUDE.md` (если есть) и стиль соседнего кода. Этот скилл — **фаза проверки**: он дополняет проектные правила, не заменяет их. Развёрнутые `❌ до → ✅ после` и ссылки на источники по каждому правилу — в [`references/rules-catalog.md`](references/rules-catalog.md).
+> **Source of truth for the project** — its root `CLAUDE.md` (if present) and the style of neighboring code. This skill is the **review phase**: it complements project rules, it does not replace them. Expanded `❌ before → ✅ after` examples and source links for each rule — in [`references/rules-catalog.md`](references/rules-catalog.md).
 
 ---
 
-## Когда применять и режим работы
+## When to apply and operating mode
 
-- **Режим по умолчанию — диагностика.** Прочитать код, прогнать статический анализ, выдать отчёт. Файлы **не править**, пока пользователь явно не попросит «применяй / чини». Тогда — **итеративно**, по одному изменению с прогоном между ними (не big-bang переписывание рабочего теста).
-- **Scope — только новое/изменённое, не весь suite.** По умолчанию — незакоммиченные изменения (`git status` + `git diff`). Если пользователь указал файл/папку — ревьюй их.
-- **Любой тип теста:** UI E2E, API, UI+API, visual regression, mobile, моки, а также Page Object, фикстуры, константы.
-- Не уходи в автономные действия за пределами ревью (воспроизведение через браузер, прогон всего suite, правки) без подтверждения — задача по умолчанию «прочитать и оценить».
+- **Default mode — diagnostics.** Read the code, run static analysis, produce a report. Do **not** edit files until the user explicitly asks to "apply / fix". Then — **iteratively**, one change at a time with a run in between (no big-bang rewrite of a working test).
+- **Scope — only new/changed code, not the whole suite.** Default — uncommitted changes (`git status` + `git diff`). If the user specified a file/directory — review those.
+- **Any test type:** UI E2E, API, UI+API, visual regression, mobile, mocks, plus Page Objects, fixtures, constants.
+- Do not drift into autonomous actions beyond the review (browser reproduction, running the whole suite, edits) without confirmation — the default task is "read and assess".
 
-## Доказательная дисциплина (без галлюцинаций)
+## Evidence discipline (no hallucinations)
 
-- Каждое замечание — по **реально прочитанной строке** (`file:line`) или по **наблюдённому выводу** typecheck / lint / прогона. Не выдумывай нарушения «по аналогии» и не ссылайся на строки, которых не видел.
-- Правило проверяется инструментом (tsc, ESLint, прогон) → **сначала запусти инструмент, потом репорти его вывод**, а не «вероятно есть».
-- Не уверен, что это дефект, а не осознанное решение проекта → помечай **«под вопросом»**, не утверждай. Сверяйся с `CLAUDE.md` проекта и соседним кодом: часть «анти-паттернов» может быть намеренной (легаси-хелперы, нестандартная разметка, осознанные исключения из правил). Имена файлов/эндпоинтов/селекторов из памяти и прошлого контекста — фон, перепроверяй на живом коде.
-- Не нашёл нарушений в категории — так и пиши «чисто», не придумывай замечание ради объёма.
+- Every finding — from an **actually read line** (`file:line`) or from **observed output** of typecheck / lint / a run. Do not invent violations "by analogy" and do not reference lines you have not seen.
+- A rule is checkable by a tool (tsc, ESLint, a run) → **run the tool first, then report its output**, not "probably present".
+- Not sure it is a defect rather than a deliberate project decision → mark it **"questionable"**, do not assert. Cross-check against the project's `CLAUDE.md` and neighboring code: some "anti-patterns" may be intentional (legacy helpers, non-standard markup, deliberate rule exceptions). File names/endpoints/selectors from memory and past context are background — re-verify against live code.
+- Found no violations in a category — say so: "clean", do not invent a finding for volume.
 
-## Процесс
+## Process
 
-1. **Scope.** Определи файлы под ревью: `git status --short` + `git diff --name-only` (учитывай untracked), либо переданные пути. Для каждого spec найди связанные Page Object'ы, константы, фикстуры.
-2. **Контекст.** `Read` изменённых файлов + связанных POM/констант/фикстур. `Read` соседнего spec в той же папке как эталон стиля. Сверь правила директории/сьюта (smoke / regress / api и т.п.) по `CLAUDE.md` проекта, если он есть.
-3. **Статический анализ (обязательно — дёшево и доказательно):**
-   - Typecheck: `tsc --noEmit` (или typecheck-скрипт проекта из `package.json`). Любая ошибка типов в новом коде = 🔴 Blocker.
-   - ESLint: найди конфиг проекта и **прочитай, какие правила реально включены** (особенно из `eslint-plugin-playwright`) — не предполагай по памяти. Вывод линта — источник правды.
-   - **Чего линт обычно НЕ ловит:** правил `missing-playwright-await`, `@typescript-eslint/no-floating-promises`, `prefer-web-first-assertions`, `no-networkidle` во многих конфигах нет → сверь с конфигом и проверяй эти категории вручную (A/C): пропущенный `await`, ручные ассерты вместо web-first, `networkidle`. Полезно предложить пользователю добавить недостающие правила.
-   - При необходимости — проверка форматирования (Prettier), если настроена в проекте.
-4. **Чеклист.** Пройди категории A–J ниже + K (правила вашего проекта). На каждое нарушение — severity + `file:line` + фикс. Глубже по правилу — [`references/rules-catalog.md`](references/rules-catalog.md).
-5. **Верификация стабильности** (только если пользователь просит убедиться, что тест рабочий, и есть sandbox): прогон **только этого теста** в нативном параллелизме проекта (НЕ `--workers=1`):
+1. **Scope.** Determine the files under review: `git status --short` + `git diff --name-only` (include untracked), or the paths provided. For each spec, find the related Page Objects, constants, fixtures.
+2. **Context.** `Read` the changed files + related POM/constants/fixtures. `Read` a neighboring spec in the same directory as a style reference. Cross-check the directory/suite rules (smoke / regress / api etc.) against the project's `CLAUDE.md`, if present.
+3. **Static analysis (mandatory — cheap and evidence-based):**
+   - Typecheck: `tsc --noEmit` (or the project's typecheck script from `package.json`). Any type error in new code = 🔴 Blocker.
+   - ESLint: find the project config and **read which rules are actually enabled** (especially from `eslint-plugin-playwright`) — do not assume from memory. Lint output is the source of truth.
+   - **What lint usually does NOT catch:** `missing-playwright-await`, `@typescript-eslint/no-floating-promises`, `prefer-web-first-assertions`, `no-networkidle` are absent from many configs → check against the config and verify these categories manually (A/C): missing `await`, manual asserts instead of web-first, `networkidle`. Worth suggesting that the user add the missing rules.
+   - If needed — a formatting check (Prettier), if configured in the project.
+4. **Checklist.** Go through categories A–J below + K (your project's rules). For each violation — severity + `file:line` + fix. Deeper per rule — [`references/rules-catalog.md`](references/rules-catalog.md).
+5. **Stability verification** (only if the user asks to confirm the test works and a sandbox is available): run **only this test** in the project's native parallelism (NOT `--workers=1`):
    ```bash
    npx playwright test <file> --grep "<id>" --project="<projectName>" --retries=0 --repeat-each=5
    ```
-   Pass-на-ретрае или плавающий результат = флак = 🟠 Major, чинить причину (гонки/гидратация/ожидания), а не прятать за retries.
-6. **Отчёт** — в формате из раздела «Формат отчёта».
+   Pass-on-retry or a floating result = flake = 🟠 Major; fix the cause (races/hydration/waits), do not hide it behind retries.
+6. **Report** — in the format from the "Report format" section.
 
 ## Severity
 
-| Метка | Значение | Типичные примеры |
+| Label | Meaning | Typical examples |
 |---|---|---|
-| 🔴 **Blocker** | Тест сломан, недетерминирован или маскирует баг. Не мержить. | Ошибка typecheck; пропущенный `await` (floating promise); `waitForTimeout`/in-page `setTimeout`-пауза; pass только на ретрае; `{ force: true }` / `dispatchEvent` / прямой `setter` в обход реального UI; тест без ассертов; `test.only`; условный `expect`, который может не выполниться. |
-| 🟠 **Major** | Хрупкость или флак при смене контента/окружения; нарушение ключевого правила проекта. | CSS/XPath-цепочки вместо role/label; мгновенный `count()`/`isVisible()`/`allTextContents()` как gate; точные цены/тексты/даты вместо regex; нарушение конвенции проекта (импорт базового `@playwright/test` там, где проект требует кастомную фикстуру; пропущена обязательная проектная проверка — напр. монитор сетевых ошибок); `waitForLoadState('networkidle')`; тест зависит от состояния другого. |
-| 🟡 **Minor** | Стиль/читаемость/поддерживаемость; на стабильность не влияет. | Нет `test.step` по бизнес-шагам; инлайн-комментарии вместо самодокументирования; `.nth()` где годится `.filter()`; рабочий, но не приоритетный локатор; неиспользуемый импорт/константа. |
-| ⚪ **Nit** | Косметика. | Именование, порядок импортов, форматирование (если не ловит Prettier). |
+| 🔴 **Blocker** | Test is broken, non-deterministic, or masks a bug. Do not merge. | Typecheck error; missing `await` (floating promise); `waitForTimeout`/in-page `setTimeout` pause; pass only on retry; `{ force: true }` / `dispatchEvent` / direct `setter` bypassing the real UI; test without asserts; `test.only`; conditional `expect` that may never execute. |
+| 🟠 **Major** | Brittleness or flake on content/environment change; violation of a key project rule. | CSS/XPath chains instead of role/label; instant `count()`/`isVisible()`/`allTextContents()` as a gate; exact prices/texts/dates instead of regex; project convention violation (importing base `@playwright/test` where the project requires a custom fixture; a mandatory project check skipped — e.g. the network error monitor); `waitForLoadState('networkidle')`; a test depends on another test's state. |
+| 🟡 **Minor** | Style/readability/maintainability; no impact on stability. | No `test.step` for business steps; inline comments instead of self-documentation; `.nth()` where `.filter()` fits; a working but non-priority locator; unused import/constant. |
+| ⚪ **Nit** | Cosmetics. | Naming, import order, formatting (if not caught by Prettier). |
 
 ---
 
-## Чеклист ревью
+## Review checklist
 
-Каждый пункт — что искать; в скобках — severity нарушения. Развёрнутые примеры и пруфы — в каталоге.
+Each item — what to look for; the violation's severity in parentheses. Expanded examples and proofs — in the catalog.
 
-### A. Детерминизм, ожидания, асинхронность
-- [ ] Нет `page.waitForTimeout(ms)` и нет `setTimeout`/`sleep` внутри `page.evaluate` (грепни оба). Ждать состояние, не время. (🔴)
-- [ ] Нет «висящих» промисов: каждый `expect`, `test.step`, действие (`click/fill/goto`), `waitFor*` — под `await`/`return`/`void`. Пропущенный `await` = молчаливый флак. (🔴)
-- [ ] Сеть — паттерн **promise → действие → await**: `const p = page.waitForResponse(...); await click(); await p`. Объявление после действия = гонка. (🔴)
-- [ ] Нет `waitForLoadState('networkidle')`. Навигация — `goto(url, { waitUntil: 'domcontentloaded' })`, без дублирующего `waitForLoadState` следом. (🟠)
-- [ ] Производные/составные проверки (несколько связанных условий, замер коллекции сразу после появления) — в `await expect(async () => {...}).toPass({ timeout })`, а не цепочка `await`-ов. (🟠)
-- [ ] Учтена SSR-гидратация: SSR-фреймворки (Nuxt/Next и др.) могут перемонтировать контент после гидратации → мгновенный `count()`/`allTextContents()` сразу после появления ловит окно пустоты. Замер через `toPass`. (🟠)
+### A. Determinism, waits, asynchrony
+- [ ] No `page.waitForTimeout(ms)` and no `setTimeout`/`sleep` inside `page.evaluate` (grep for both). Wait for state, not time. (🔴)
+- [ ] No floating promises: every `expect`, `test.step`, action (`click/fill/goto`), `waitFor*` — under `await`/`return`/`void`. A missing `await` = silent flake. (🔴)
+- [ ] Network — the **promise → action → await** pattern: `const p = page.waitForResponse(...); await click(); await p`. Declaring after the action = race. (🔴)
+- [ ] No `waitForLoadState('networkidle')`. Navigation — `goto(url, { waitUntil: 'domcontentloaded' })`, without a duplicate `waitForLoadState` right after. (🟠)
+- [ ] Derived/compound checks (several related conditions, measuring a collection right after it appears) — in `await expect(async () => {...}).toPass({ timeout })`, not a chain of `await`s. (🟠)
+- [ ] SSR hydration accounted for: SSR frameworks (Nuxt/Next etc.) can remount content after hydration → an instant `count()`/`allTextContents()` right after appearance hits the emptiness window. Measure via `toPass`. (🟠)
 
-### B. Локаторы
-- [ ] Приоритет: `getByRole({ name })` → `getByText` → `getByLabel` → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (крайний случай) → XPath (почти никогда). (🟠 при CSS/XPath без причины)
-- [ ] Нет хрупких CSS-цепочек по структуре DOM (`div > div > span`, `.episode-actions-later`). Ломаются при ребрендинге. (🟠)
-- [ ] Strict mode: локатор резолвится в один элемент; уточнение через `{ name }` / `.filter({ hasText })` / `.filter({ has })`, а не `.nth()`. `.nth()` — только с обоснованием. (🟡)
-- [ ] Плавающие элементы (дропдауны, тосты, модалки, портальный контент, iframe) ищутся **глобально от `page`**, не от секции. (🟠)
-- [ ] Длинный `getByText('целое предложение')` не используется как якорь — хрупко к правкам копирайта; брать стабильный фрагмент/role. (🟡)
+### B. Locators
+- [ ] Priority: `getByRole({ name })` → `getByText` → `getByLabel` → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (last resort) → XPath (almost never). (🟠 for CSS/XPath without a reason)
+- [ ] No brittle CSS chains tied to DOM structure (`div > div > span`, `.episode-actions-later`). They break on rebranding. (🟠)
+- [ ] Strict mode: the locator resolves to a single element; narrow via `{ name }` / `.filter({ hasText })` / `.filter({ has })`, not `.nth()`. `.nth()` — only with justification. (🟡)
+- [ ] Floating elements (dropdowns, toasts, modals, portal content, iframes) are located **globally from `page`**, not from a section. (🟠)
+- [ ] A long `getByText('whole sentence')` is not used as an anchor — brittle to copy edits; take a stable fragment/role. (🟡)
 
-### C. Ассерты
-- [ ] Только **web-first** (авто-ретрай): `toBeVisible/toHaveText/toHaveCount/toHaveValue/toBeChecked/toHaveAttribute/toHaveURL`. Нет `expect(await loc.isVisible()).toBe(true)` и `expect(await loc.count()).toBe(n)` — не ретраятся. (🔴/🟠)
-- [ ] Каждый тест что-то проверяет (нет теста, который только кликает без `expect`). (🔴)
-- [ ] Блок независимых проверок одной секции — через `expect.soft`, чтобы собрать все падения разом. (🟡)
-- [ ] Нет ассертов на точные цены/числа/даты/динамический контент — regex или диапазон. (🟠)
-- [ ] Известный незакрытый баг — `test.fail()` (с единственным баг-ассертом), не `test.fixme()`; рабочее поведение — отдельным обычным тестом. (🟡)
+### C. Assertions
+- [ ] Only **web-first** (auto-retrying): `toBeVisible/toHaveText/toHaveCount/toHaveValue/toBeChecked/toHaveAttribute/toHaveURL`. No `expect(await loc.isVisible()).toBe(true)` and `expect(await loc.count()).toBe(n)` — they do not retry. (🔴/🟠)
+- [ ] Every test verifies something (no test that only clicks without an `expect`). (🔴)
+- [ ] A block of independent checks for one section — via `expect.soft`, to collect all failures at once. (🟡)
+- [ ] No asserts on exact prices/numbers/dates/dynamic content — regex or a range. (🟠)
+- [ ] A known open bug — `test.fail()` (with the single bug assert), not `test.fixme()`; the working behavior — as a separate regular test. (🟡)
 
-### D. Изоляция и независимость
-- [ ] Тесты независимы: состояние НЕ передаётся между тестами. `let x` на уровне `describe`, переинициализируемый в `beforeEach`, — распространённый валидный паттерн; нарушение — когда тест читает результат другого. Прогон в одиночку и в любом порядке должен проходить. (🔴 если ломает изоляцию)
-- [ ] `describe.configure({ mode: 'serial' })` — только при реальной зависимости, не «на всякий случай». (🟠)
-- [ ] Setup/teardown — в `beforeEach`/фикстурах, без копипасты; созданные сущности (API) удаляются. (🟠)
-- [ ] Тест не зависит от внешних сайтов и third-party виджетов — тестируем только то, что контролируем; внешнее — мок/проверка факта запроса. (🟠)
+### D. Isolation and independence
+- [ ] Tests are independent: state is NOT passed between tests. `let x` at `describe` level, reinitialized in `beforeEach`, is a common valid pattern; the violation is a test reading another test's result. Must pass in isolation and in any order. (🔴 if isolation is broken)
+- [ ] `describe.configure({ mode: 'serial' })` — only for a real dependency, not "just in case". (🟠)
+- [ ] Setup/teardown — in `beforeEach`/fixtures, no copy-paste; created entities (API) are deleted. (🟠)
+- [ ] The test does not depend on external sites and third-party widgets — test only what you control; for the external part — mock/verify the request was made. (🟠)
 
-### E. TypeScript и линт
-- [ ] Typecheck зелёный для нового кода (`tsc --noEmit`, strict). (🔴)
-- [ ] `any` в **POM / fixtures / utils** — нежелателен, типизируй (`Locator`/`Page`/`Route`/`APIResponse`). Сверь с конфигом проекта: `any` может быть осознанно разрешён в спеках (напр. для мок-данных) — тогда там не флагай. `@ts-ignore` — только с причиной/тикетом. (🟠 для POM/utils)
-- [ ] Поля POM — `readonly Locator`; фикстуры типизированы (`base.extend<{...}>`); тело ответа API типизируй явно, если на него опираются ассерты. (🟡)
-- [ ] **Пропущенный `await` линт часто НЕ ловит** (проверь конфиг: есть ли `no-floating-promises` / `missing-playwright-await`; `valid-expect` покрывает лишь часть) → перечитай глазами, см. A2. (🔴)
-- [ ] Сверь модульную систему (ESM vs CJS) и стиль импортов (относительные vs алиасы) с фактическим кодом проекта — следуй существующему стилю, не навязывай свой. Неиспользуемые импорты/переменные/константы/методы POM убрать. (🟡)
+### E. TypeScript and lint
+- [ ] Typecheck green for new code (`tsc --noEmit`, strict). (🔴)
+- [ ] `any` in **POM / fixtures / utils** — undesirable, type it (`Locator`/`Page`/`Route`/`APIResponse`). Cross-check the project config: `any` may be deliberately allowed in specs (e.g. for mock data) — do not flag it there. `@ts-ignore` — only with a reason/ticket. (🟠 for POM/utils)
+- [ ] POM fields — `readonly Locator`; fixtures typed (`base.extend<{...}>`); type the API response body explicitly if asserts rely on it. (🟡)
+- [ ] **A missing `await` is often NOT caught by lint** (check the config: is `no-floating-promises` / `missing-playwright-await` there; `valid-expect` covers only part) → re-read by eye, see A2. (🔴)
+- [ ] Match the module system (ESM vs CJS) and import style (relative vs aliases) against the project's actual code — follow the existing style, do not impose your own. Remove unused imports/variables/constants/POM methods. (🟡)
 
-### F. Сеть и моки
-- [ ] Моки (`page.route`) — только для edge cases (5xx, пустой ответ, таймаут, офлайн). Позитивный happy-path — против реального API. (🟠)
-- [ ] Проверка контракта, где это суть теста: `waitForResponse` (статус + тело) / `waitForRequest` + `postDataJSON()`. Для форм — инспекция payload на `[object Object]`, пустые/несериализованные поля, а не «кнопка активна». (🟠)
-- [ ] Роуты ставятся **до** триггерящего действия; область — тест/фикстура, не глобально на suite. (🟠)
-- [ ] Внешний хост, который может не отвечать (напр. внешний личный кабинет, платёжный шлюз): переход не проверяем «вглубь» — оракул это инициированный навигационный запрос + `route.abort()`, иначе pending-навигация подвешивает teardown. (🟠)
+### F. Network and mocks
+- [ ] Mocks (`page.route`) — only for edge cases (5xx, empty response, timeout, offline). The positive happy path — against the real API. (🟠)
+- [ ] Contract verification where it is the point of the test: `waitForResponse` (status + body) / `waitForRequest` + `postDataJSON()`. For forms — inspect the payload for `[object Object]`, empty/non-serialized fields, not just "button is enabled". (🟠)
+- [ ] Routes are set up **before** the triggering action; scope — test/fixture, not globally on the suite. (🟠)
+- [ ] An external host that may not respond (e.g. an external account portal, a payment gateway): do not verify the transition "in depth" — the oracle is the initiated navigation request + `route.abort()`, otherwise a pending navigation hangs teardown. (🟠)
 
-### G. Структура, читаемость, гигиена
-- [ ] Логические шаги обёрнуты в `test.step('Императив', …)` (видно в Allure/HTML/trace). `return` — снаружи коллбэка. Не дробить на каждое действие. (🟡)
-- [ ] **Нет инлайн-комментариев** в тестах — самодокументирование (осмысленные имена, semantic-локаторы, шаги). Контекст — в описании/аннотации репортера (напр. `allure.description`), если проект их использует. (🟡)
-- [ ] Параметризация однотипных кейсов через `for...of` **снаружи** `test.describe`, а не копии теста. (🟡)
-- [ ] Нет `test.only`, закомментированных тестов, временных файлов/черновиков, отладочных `console.log`/`page.pause()`. (🔴 для `test.only`/`page.pause`, иначе 🟡)
-- [ ] Имена тестов/шагов осмысленны; формат ID/тегов (`@allure.id:N`, ключ ТК и т.п.) — как у соседних тестов в файле. (⚪)
+### G. Structure, readability, hygiene
+- [ ] Logical steps are wrapped in `test.step('Imperative name', …)` (visible in Allure/HTML/trace). `return` — outside the callback. Do not split into a step per action. (🟡)
+- [ ] **No inline comments** in tests — self-documentation (meaningful names, semantic locators, steps). Context — in the reporter description/annotation (e.g. `allure.description`), if the project uses them. (🟡)
+- [ ] Parameterize same-shaped cases via `for...of` **outside** `test.describe`, not test copies. (🟡)
+- [ ] No `test.only`, commented-out tests, temporary files/drafts, debug `console.log`/`page.pause()`. (🔴 for `test.only`/`page.pause`, otherwise 🟡)
+- [ ] Test/step names are meaningful; ID/tag format (`@allure.id:N`, TC key etc.) — as in the neighboring tests in the file. (⚪)
 
-### H. Маскировка багов и флак
-- [ ] Нет синтетических обходов реального UX: `{ force: true }`, `dispatchEvent`, прямой React/Vue-setter, ручной скролл вместо авто-actionability — если только это не оправдано контролируемым input'ом (напр. кастомные `display:none` инпуты — проверь в браузере). Фикс должен ловить регрессию, если фича сломается, а не прятать её. (🔴)
-- [ ] `retries`/`mode: serial`/увеличенный timeout не используются как «лекарство» от флака. Карантин допустим только временно, со ссылкой на тикет. (🟠)
-- [ ] `try/catch` не глушит падения действий/ассертов (auto-waiting встроен; `.catch()` прячет баг). (🟠)
-- [ ] Пред-релизный тест (написан до выката фичи) **падает честно**, не спрятан за `skip`/флагом. (🟠)
+### H. Bug masking and flake
+- [ ] No synthetic bypasses of the real UX: `{ force: true }`, `dispatchEvent`, direct React/Vue setter, manual scroll instead of auto-actionability — unless justified by a controlled input (e.g. custom `display:none` inputs — verify in the browser). The fix must catch a regression if the feature breaks, not hide it. (🔴)
+- [ ] `retries`/`mode: serial`/an increased timeout are not used as a "cure" for flake. Quarantine is acceptable only temporarily, with a ticket link. (🟠)
+- [ ] `try/catch` does not swallow action/assert failures (auto-waiting is built in; `.catch()` hides the bug). (🟠)
+- [ ] A pre-release test (written before the feature ships) **fails honestly**, not hidden behind `skip`/a flag. (🟠)
 
-### I. Спецслучаи по типу теста
-- [ ] **API:** проверяется статус И тело; идентификаторы запросов — свежий `randomUUID()` из встроенного `crypto` на каждый запрос (не тащи пакет `uuid`, если его нет в проекте); учтён rate limit; cleanup созданного. (🟠)
-- [ ] **iframe:** `frameLocator`; контент ищется внутри фрейма. **Новый таб:** `context.waitForEvent('page')`. **Download:** `waitForEvent('download')` + проверка имени. **Upload:** `setInputFiles`. **Время:** `page.clock`. **Геолокация/права:** `grantPermissions`/`setGeolocation`. (🟠 при ручных обходах)
-- [ ] **visual:** `toHaveScreenshot` с `animations:'disabled'` и `mask` на динамику; эталоны — на платформе CI (macOS-эталон против Linux-CI = гарантированный diff). Только если тест-кейс требует эталон. (🟠)
+### I. Special cases by test type
+- [ ] **API:** verify status AND body; request identifiers — a fresh `randomUUID()` from the built-in `crypto` per request (do not pull in the `uuid` package if the project does not have it); rate limit accounted for; cleanup of created entities. (🟠)
+- [ ] **iframe:** `frameLocator`; content is located inside the frame. **New tab:** `context.waitForEvent('page')`. **Download:** `waitForEvent('download')` + filename check. **Upload:** `setInputFiles`. **Time:** `page.clock`. **Geolocation/permissions:** `grantPermissions`/`setGeolocation`. (🟠 for manual workarounds)
+- [ ] **visual:** `toHaveScreenshot` with `animations:'disabled'` and `mask` on dynamic content; baselines — on the CI platform (a macOS baseline against Linux CI = guaranteed diff). Only if the test case requires a baseline. (🟠)
 
-### J. Соответствие намерению (оракул реально проверяет заявленное)
-- [ ] Тест проверяет то, что обещает имя/описание, а не суррогат. «Валидация формы» → инспекция реального payload, не только «кнопка активна». «Загрузка ещё» → реальная догрузка и сверка, не только клик. (🟠)
-- [ ] Привязка к контенту структурная (наличие, непустота, `count > 0`, regex), чтобы тест пережил смену копирайта/цен — особенно для регрессов после фикса. (🟠)
-- [ ] Оракул адекватен ограничению окружения: где UI не различает 404/5xx (одна заглушка на оба) — проверка сетевая, не «увидел текст ошибки». (🟠)
+### J. Intent conformance (the oracle actually verifies what is claimed)
+- [ ] The test verifies what the name/description promises, not a surrogate. "Form validation" → inspect the real payload, not just "button is enabled". "Load more" → actual loading of more items and verification, not just the click. (🟠)
+- [ ] Content binding is structural (presence, non-emptiness, `count > 0`, regex), so the test survives copy/price changes — especially for regression tests after a fix. (🟠)
+- [ ] The oracle matches the environment's limitation: where the UI does not distinguish 404/5xx (one stub for both) — the check is network-level, not "saw the error text". (🟠)
 
-### K. Правила вашего проекта (шаблон — заполните под свой репозиторий)
-> У зрелого тест-репозитория всегда есть конвенции, которые не проверит ни один универсальный чеклист. Зафиксируйте их здесь или в `CLAUDE.md` проекта — тогда ревью будет ловить их нарушения. Типовые категории с примерами:
+### K. Your project's rules (template — fill in for your repository)
+> A mature test repository always has conventions no universal checklist will catch. Record them here or in the project's `CLAUDE.md` — then the review will catch their violations. Typical categories with examples:
 
-- [ ] **Кастомные фикстуры:** где импортировать `test` из кастомной фикстуры (`./fixtures/custom-test`) вместо `@playwright/test`, и какие обязательные проверки она даёт (напр. монитор сетевых ошибок, вызываемый в конце теста / в `afterEach`). (🟠)
-- [ ] **Паттерны директорий:** чем отличаются правила smoke / regress / api сьютов — композиция vs фикстуры для POM, репортер-аннотации, testMatch/testIgnore, куда добавлять новые тесты. (🟠)
-- [ ] **Окружения:** тест и POM проверены на всех целевых стендах, не только на одном (DOM на тест-стенде может отличаться от прода); известные особенности стендов зафиксированы списком. (🟠)
-- [ ] **Skipped-гигиена:** тест не добавляет постоянных skipped в штатные прогоны; окружение-специфичное исключается конфигом (`testIgnore`/`testMatch`), runtime `test.skip` — только для динамических условий (фича-флаг, известный баг с тикетом). Итог прогона: passed = ок, failed = проблема, skipped = требует объяснения. (🟡)
-- [ ] **Зависимости/конфиг:** не бампать версию `@playwright/test` и не добавлять зависимости без сверки с CI (Docker-образ, lock-файл); не трогать `playwright.config.ts` без необходимости. (🔴 если затронуто без запроса)
+- [ ] **Custom fixtures:** where to import `test` from the custom fixture (`./fixtures/custom-test`) instead of `@playwright/test`, and which mandatory checks it provides (e.g. a network error monitor invoked at the end of the test / in `afterEach`). (🟠)
+- [ ] **Directory patterns:** how the rules of the smoke / regress / api suites differ — composition vs fixtures for POM, reporter annotations, testMatch/testIgnore, where to add new tests. (🟠)
+- [ ] **Environments:** the test and POM are verified on all target environments, not just one (the DOM on the test environment may differ from prod); known environment quirks are recorded as a list. (🟠)
+- [ ] **Skipped hygiene:** the test does not add permanent skips to standard runs; environment-specific exclusion goes through config (`testIgnore`/`testMatch`), runtime `test.skip` — only for dynamic conditions (feature flag, known bug with a ticket). Run outcome: passed = ok, failed = problem, skipped = requires an explanation. (🟡)
+- [ ] **Dependencies/config:** do not bump the `@playwright/test` version and do not add dependencies without checking against CI (Docker image, lock file); do not touch `playwright.config.ts` without necessity. (🔴 if touched without being asked)
 
 ---
 
-## Формат отчёта
+## Report format
 
 ```
-## Ревью: <файлы / scope>
+## Review: <files / scope>
 
-**Статический анализ:** typecheck ✅/❌ · lint ✅/❌ · (прогон: N/N pass, --repeat-each=5)
+**Static analysis:** typecheck ✅/❌ · lint ✅/❌ · (run: N/N pass, --repeat-each=5)
 
 ### 🔴 Blocker (N)
-1. `path/to/spec.ts:42` — <что не так>.
-   Почему: <ссылка на правило/категорию>.
-   Фикс:
+1. `path/to/spec.ts:42` — <what is wrong>.
+   Why: <link to rule/category>.
+   Fix:
    ```ts
-   // ❌ было / ✅ стало
+   // ❌ before / ✅ after
    ```
 
 ### 🟠 Major (N)
@@ -163,16 +163,16 @@ allowed-tools:
 ### ⚪ Nit (N)
 …
 
-### ✅ Что хорошо
-- <что соответствует best practice — кратко>
+### ✅ What is good
+- <what matches best practice — brief>
 
-### Вердикт
-<Готов к коммиту / К доработке: список Blocker+Major> · <команда для прогона с правильным --project>
+### Verdict
+<Ready to commit / Needs rework: list of Blocker+Major> · <run command with the correct --project>
 ```
 
-Правила:
-- Сортировка строго по severity (Blocker → Nit). Внутри — по файлу/строке.
-- Каждый Blocker/Major — с конкретным фиксом (сниппет `❌ было → ✅ стало`).
-- Чисто в категории — пиши «чисто», не выдумывай.
-- В конце — однострочный вердикт и команда запуска с верным `--project`.
-- Если просили применить фиксы — делай **итеративно** (одно изменение → typecheck/прогон → следующее), не переписывай рабочий тест целиком.
+Rules:
+- Sort strictly by severity (Blocker → Nit). Within a level — by file/line.
+- Every Blocker/Major — with a concrete fix (a `❌ before → ✅ after` snippet).
+- A category is clean — write "clean", do not invent.
+- At the end — a one-line verdict and the run command with the correct `--project`.
+- If asked to apply fixes — do it **iteratively** (one change → typecheck/run → the next), do not rewrite a working test wholesale.

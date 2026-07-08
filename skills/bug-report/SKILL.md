@@ -1,6 +1,6 @@
 ---
 name: bug-report
-description: Быстрый баг-репорт в Jira. Вызывай по /bug-report. Собирает данные, показывает превью, создает дефект в Jira после подтверждения.
+description: Quick bug report in Jira. Invoke via /bug-report. Gathers data, shows a preview, creates the defect in Jira after confirmation.
 allowed-tools:
   - AskUserQuestion
   - mcp__atlassian__jira_create_issue
@@ -10,94 +10,94 @@ allowed-tools:
   - mcp__atlassian__jira_get_issue
 ---
 
-Ты помогаешь быстро завести баг в Jira. Работай по этому алгоритму:
+You help file a bug in Jira quickly. Follow this algorithm:
 
-## 0. Конфигурация проекта (заполните под свой Jira)
+## 0. Project configuration (fill in for your Jira)
 
-Значения ниже — пример; адаптируйте под свой инстанс (прямо здесь или в `CLAUDE.md` проекта):
+The values below are an example; adapt them to your instance (right here or in the project's `CLAUDE.md`):
 
-- **Проект по умолчанию:** `PROJ`
-- **Тип задачи для дефекта:** `Bug` (проверьте точное имя типа в своём проекте — в русскоязычных инстансах часто «Дефект»)
-- **Значения приоритета:** как в вашем Jira (напр. Highest / High / Medium / Low — или локализованные)
-- **Обязательные кастомные поля:** во многих проектах создание тикета падает без них. Пример формата:
+- **Default project:** `PROJ`
+- **Issue type for a defect:** `Bug` (check the exact type name in your project - in localized instances the type may be named differently, e.g. "Defect"/«Дефект» in Russian ones)
+- **Priority values:** as in your Jira (e.g. Highest / High / Medium / Low - or localized)
+- **Required custom fields:** in many projects, issue creation fails without them. Example format:
   - `customfield_XXXXX` (Team): `"..."`
-  - `customfield_XXXXX` (Среда обнаружения): `{"value": "Test"}`; для бага, найденного на проде — `{"value": "Prod"}`
-  Свои поля и допустимые значения найдите через `jira_search_fields` и `jira_get_field_options`, либо посмотрите заполненные поля свежего дефекта коллег через `jira_get_issue`.
+  - `customfield_XXXXX` (Detection environment): `{"value": "Test"}`; for a bug found in production - `{"value": "Prod"}`
+  Find your fields and their allowed values via `jira_search_fields` and `jira_get_field_options`, or inspect the filled fields of a colleague's recent defect via `jira_get_issue`.
 
-## 1. Сбор данных
+## 1. Data gathering
 
-Если пользователь передал описание бага в аргументах - используй его.
-Если нет - задай вопросы через AskUserQuestion:
+If the user passed the bug description in the arguments - use it.
+If not - ask questions via AskUserQuestion:
 
-Обязательные данные:
-- Что произошло (фактический результат)
-- Что ожидалось (ожидаемый результат)
-- Шаги воспроизведения
-- Окружение (стенд, браузер, устройство)
+Required data:
+- What happened (actual result)
+- What was expected (expected result)
+- Steps to reproduce
+- Environment (environment name, browser, device)
 
-Опциональные:
-- Проект (по умолчанию — из конфигурации)
-- Приоритет (по умолчанию средний)
+Optional:
+- Project (default - from the configuration)
+- Priority (default medium)
 - Assignee
 
-## 2. Формат тикета
+## 2. Ticket format
 
-Тип и приоритет — по конфигурации (раздел 0).
+Type and priority - per the configuration (section 0).
 
-Заголовок (summary): краткое описание проблемы, без префиксов [BUG] и т.п.
+Summary: a brief description of the problem, no [BUG] prefixes or similar.
 
-Структура description - plain text с bold-заголовками:
-
-```
-**Шаги воспроизведения:**
-
-1. Шаг 1
-2. Шаг 2
-
-**Фактический результат:**
-
-Описание того, что происходит.
-
-**Ожидаемый результат:**
-
-Описание того, что должно происходить.
-
-**Окружение:**
-
-Стенд/браузер/устройство.
-```
-
-Если нужны предусловия - добавить блок **Предусловия:** перед шагами.
-Если есть полезный контекст - добавить блок **Дополнительно:** в конце.
-
-## 3. Правила текста
-
-- Не использовать markdown-заголовки (##), только **bold** — Jira рендерит description не как markdown; проверьте рендеринг на своём инстансе
-- Не использовать таблицы в description
-- Язык — принятый в вашем трекере
-- Названия браузеров писать в пользовательском виде: Chrome (не Chromium), Safari (не WebKit). Это касается и движка тестирования (прогон в Chromium → пишем «Chrome», в WebKit → «Safari»)
-- Не линковать созданный баг с другими тикетами автоматически — только по явной просьбе пользователя
-
-## 4. Превью перед созданием
-
-ОБЯЗАТЕЛЬНО показать пользователю полный текст тикета и дождаться подтверждения перед вызовом mcp__atlassian__jira_create_issue. Формат превью:
+Description structure - plain text with bold headers:
 
 ```
-**Тип:** Bug
-**Приоритет:** Medium
-**Assignee:** (если указан)
-**Проект:** PROJ
+**Steps to reproduce:**
 
-**Заголовок:** ...
+1. Step 1
+2. Step 2
 
-**Описание:**
-(полный текст description)
+**Actual result:**
+
+Description of what happens.
+
+**Expected result:**
+
+Description of what should happen.
+
+**Environment:**
+
+Environment/browser/device.
 ```
 
-Только после явного подтверждения ("да", "ок", "создавай") - вызывать API создания.
+If preconditions are needed - add a **Preconditions:** block before the steps.
+If there is useful context - add an **Additional info:** block at the end.
 
-## 5. После создания
+## 3. Text rules
 
-Вывести ключ и ссылку на созданный тикет. Если assignee не назначился - предупредить.
+- Do not use markdown headings (##), only **bold** - Jira does not render the description as markdown; check the rendering on your instance
+- Do not use tables in the description
+- Language - whatever is standard in your issue tracker
+- Write browser names the user-facing way: Chrome (not Chromium), Safari (not WebKit). This also applies to the test engine (run in Chromium → write "Chrome", in WebKit → "Safari")
+- Do not link the created bug to other tickets automatically - only on explicit user request
 
-**Скриншоты:** если в сессии есть скриншоты бага (пути к файлам) - после создания прикрепить их через `mcp__atlassian__jira_update_issue` (параметр `attachments`, пути через запятую). Скрин должен быть точечным (проблемный элемент крупно), не fullPage всей страницы. Если подходящего скрина нет - предложить пользователю снять и приложить.
+## 4. Preview before creation
+
+ALWAYS show the user the full ticket text and wait for confirmation before calling mcp__atlassian__jira_create_issue. Preview format:
+
+```
+**Type:** Bug
+**Priority:** Medium
+**Assignee:** (if specified)
+**Project:** PROJ
+
+**Summary:** ...
+
+**Description:**
+(full description text)
+```
+
+Only after explicit confirmation ("yes", "ok", "create it") - call the creation API.
+
+## 5. After creation
+
+Output the key and link of the created ticket. If the assignee was not set - warn the user.
+
+**Screenshots:** if the session has bug screenshots (file paths) - after creation, attach them via `mcp__atlassian__jira_update_issue` (the `attachments` parameter, comma-separated paths). The screenshot must be targeted (the problem element up close), not a fullPage shot of the whole page. If no suitable screenshot exists - suggest the user take one and attach it.

@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Универсальный фреймворк тестирования (frontend + backend) — дотошный прогон любой задачи на тестирование с доказательной дисциплиной. Используй, когда нужно протестировать фичу/форму/билд/API/сервис, составить план тестирования, прогнать проверки, провести исследовательское или регрессионное тестирование, найти дефекты.
+description: Universal testing framework (frontend + backend) — a meticulous run of any testing task with evidence discipline. Use when you need to test a feature/form/build/API/service, draft a test plan, run checks, perform exploratory or regression testing, or find defects.
 allowed-tools:
   - Read
   - Write
@@ -10,104 +10,104 @@ allowed-tools:
   - Agent
 ---
 
-Мастер-чеклист «как тестировать что угодно» — frontend/UI и backend/сервисы. Доктрина:
-- **Дотошность по умолчанию.** Покрывай всё сам: happy path → негатив → границы → редкие комбинации. Глубина пропорциональна риску, но классы проверок не пропускай.
-- **Доказательность.** Pass/Fail ставится ТОЛЬКО по наблюдённому артефакту (скриншот, ответ сети, лог, дамп БД). Не проверял — `Not tested`, помешали — `Blocked` с причиной. Никаких галлюцинаций и «по логике должно работать».
-- **Логируй каждое отклонение сразу.** Любое расхождение с макетом/требованиями фиксируй немедленно, даже минорное (отступ, копирайт, цвет).
-- **Цель — заменить ручное тестирование.** Надёжность важнее скорости; «не успел/не смог» пишем прямо.
+Master checklist "how to test anything" — frontend/UI and backend/services. Doctrine:
+- **Meticulousness by default.** Cover everything yourself: happy path → negative → boundaries → rare combinations. Depth scales with risk, but never skip check classes.
+- **Evidence discipline.** Pass/Fail is set ONLY from an observed artifact (screenshot, network response, log, DB dump). Didn't check — `Not tested`; couldn't — `Blocked` with a reason. No hallucinations and no "should work by logic".
+- **Log every deviation immediately.** Record any mismatch with the design (Figma)/requirements at once, even a minor one (spacing, copy, color).
+- **The goal is to replace manual testing.** Reliability over speed; "ran out of time / couldn't" is stated plainly.
 
 ---
 
-## 0. Процесс (для любой задачи)
+## 0. Process (for any task)
 
-**Сбор контекста**
-- Прочитать тикет целиком: описание, AC/Gherkin, комментарии, вложения, связанные задачи (blocks/relates/epic), компонент, релиз.
-- Зафиксировать source of truth для каждого требования (AC → ТЗ/Confluence → Figma → прод-поведение) и приоритет при конфликте.
-- Сверить Figma: версия, режим (desktop/mobile/adaptive), states (default/hover/focus/active/disabled/loading/error/empty), варианты компонентов, токены; что в макете vs что «подразумевается».
-- Найти существующие ТК (в вашей TMS — Zephyr/TestRail/др.) и автотесты (в репозитории автотестов проекта): переиспользовать, выявить пробелы, не дублировать.
-- Снять прод/preprod baseline (как фича работает сейчас — для регрессии и воспроизведения багов на актуальной версии).
-- Уточнить окружение: стенд, доступы, тестовые учётки/роли, фиче-флаги, состояние данных, версия билда/коммит.
-- Определить интеграции и зависимости: внешние API, платёжки, авторизация, очереди — что мокается, что реально.
-- Явно зафиксировать out of scope (нативные приложения, неподдерживаемые браузеры, легаси-флоу).
+**Context gathering**
+- Read the ticket in full: description, AC/Gherkin, comments, attachments, linked issues (blocks/relates/epic), component, release.
+- Pin the source of truth for each requirement (AC → spec/Confluence → Figma → production behavior) and the precedence on conflict.
+- Check Figma: version, mode (desktop/mobile/adaptive), states (default/hover/focus/active/disabled/loading/error/empty), component variants, tokens; what is in the design vs what is "implied".
+- Find existing test cases (in your TMS — Zephyr/TestRail/other) and autotests (in the project's autotest repository): reuse, identify gaps, don't duplicate.
+- Capture a production/preprod baseline (how the feature works now — for regression and reproducing bugs on the current version).
+- Clarify the environment: environment instance, access, test accounts/roles, feature flags, data state, build version/commit.
+- Identify integrations and dependencies: external APIs, payment providers, auth, queues — what is mocked, what is real.
+- Explicitly record out of scope (native apps, unsupported browsers, legacy flows).
 
-**Анализ требований и вопросы аналитику**
-- Каждый AC → проверка; каждая проверка → ссылка на AC или явная пометка «доп. эвристика».
-- Выявить неоднозначности («должно корректно работать», нет конкретных значений, неуказанные границы, неопределённое поведение при ошибке).
-- Расхождения тикет ↔ Figma ↔ прод ↔ доку — НЕ закрывать допущением, выписать вопросом.
-- Зафиксировать неопределённое поведение: пустые состояния, ошибки сети/сервера, таймауты, отказ интеграции, параллельные действия, истёкшая сессия.
-- Уточнить: валидации (обязательность, форматы, маски, длины, допустимые символы, клиент vs сервер, тексты ошибок); права/роли (кто видит/может, неавторизованный, без permission); локаль/форматы (язык, дата/время/валюта/числа, TZ, направление текста).
-- Все вопросы — списком с пометкой блокирующий/неблокирующий; блокирующие закрыть до старта.
+**Requirements analysis and questions for the analyst**
+- Every AC → a check; every check → a link to an AC or an explicit "extra heuristic" note.
+- Surface ambiguities ("should work correctly", no concrete values, unspecified boundaries, undefined error behavior).
+- Mismatches ticket ↔ Figma ↔ production ↔ docs — do NOT close with an assumption, write them up as questions.
+- Record undefined behavior: empty states, network/server errors, timeouts, integration failure, concurrent actions, expired session.
+- Clarify: validations (required fields, formats, masks, lengths, allowed characters, client vs server, error texts); permissions/roles (who sees/can, unauthenticated, missing permission); locale/formats (language, date/time/currency/numbers, TZ, text direction).
+- All questions — as a list marked blocking/non-blocking; close blocking ones before starting.
 
-**Приоритизация и риск**
-- Риск по областям = вероятность дефекта × влияние (деньги, безопасность, данные, репутация, частота использования).
-- Фокус на изменённом коде и его blast radius, а не ровным слоем.
-- Решить: что автоматизировать (стабильное, регрессоопасное) vs ручная проверка (разведка, UX, разовое, визуал).
-- Выделить smoke-подмножество (критичное для быстрой проверки билда) и regress-подмножество.
-- Под дедлайн договориться о глубине явно, а не молча урезать.
+**Prioritization and risk**
+- Risk per area = defect probability × impact (money, security, data, reputation, usage frequency).
+- Focus on changed code and its blast radius, not a uniform spread.
+- Decide: what to automate (stable, regression-prone) vs manual checking (exploration, UX, one-off, visual).
+- Carve out a smoke subset (critical for a quick build check) and a regress subset.
+- Under a deadline, agree on depth explicitly, don't cut it silently.
 
-**План / матрица покрытия**
-- Scope: что входит/нет, на каких окружениях/браузерах/вьюпортах.
-- Матрица: браузеры (Chromium/WebKit/Firefox) × вьюпорты × роли × состояния данных.
-- Классы проверок: функциональные (happy/negative/boundary), UI/верстка/адаптив, валидации, навигация/роутинг/deeplink, состояния (loading/empty/error/success), доступы/роли, интеграции/API, данные/персистентность; нефункциональное (перф, security) где релевантно.
-- Для каждого пункта: предусловие → действие → ожидаемый результат → привязка к AC/источнику.
-- Тестовые данные: валидные/невалидные/граничные, спецсимволы, длинные строки, пустые значения, разные роли/состояния аккаунта.
-- Согласовать exit-критерии и формат отчёта ДО выполнения.
+**Plan / coverage matrix**
+- Scope: what is in/out, on which environments/browsers/viewports.
+- Matrix: browsers (Chromium/WebKit/Firefox) × viewports × roles × data states.
+- Check classes: functional (happy/negative/boundary), UI/layout/responsive layout, validations, navigation/routing/deeplink, states (loading/empty/error/success), permissions/roles, integrations/API, data/persistence; non-functional (perf, security) where relevant.
+- For each item: precondition → action → expected result → link to AC/source.
+- Test data: valid/invalid/boundary, special characters, long strings, empty values, different roles/account states.
+- Agree on exit criteria and report format BEFORE execution.
 
-**Выполнение (доказательно)**
-- **Масштаб прогона.** Крупную задачу (длинный многошаговый флоу, полный регресс экрана, сверка прод/тест, E2E релиза) выполнять через fan-out (`references/fan-out.md`): оркестратор последовательно ведёт браузер и собирает артефакты, затем параллельные субагенты (`Agent`) разбирают их по осям, синтез сводит находки. Мелкую (одна страница, smoke, один баг) — линейным проходом.
-- Воспроизводить по шагам; для каждого результата — наблюдаемый артефакт (скриншот, видео, ответ сети, консоль, дамп DOM/БД).
-- Различать: «работает как ожидалось» / «баг» / «вопрос к требованиям» / «не воспроизводится» — не сваливать в одно.
-- Проверять не только UI, но и сеть (статус-коды, payload, обработку 4xx/5xx, ретраи, отсутствие чувствительных данных) и персистентность (перезагрузка, повторный вход).
-- Консоль держать открытой весь прогон: ошибки/ворнинги JS, 404 ресурсов, CSP/CORS.
-- Состояние после действия проверять в нескольких слоях: UI ↔ сеть ↔ БД/хранилище.
-- Изолировать дефект: минимальные шаги, частота (always/intermittent), окружение, билд, предусловия; при нестабильности — повторить N раз, зафиксировать частоту, не маскировать ретраем без понимания причины.
+**Execution (evidence-based)**
+- **Run scale.** Execute a large task (long multi-step flow, full screen regress, production/test comparison, release E2E) via fan-out (`references/fan-out.md`): the orchestrator drives the browser sequentially and collects artifacts, then parallel subagents (`Agent`) analyze them per axis, synthesis merges the findings. A small one (single page, smoke, one bug) — as a linear pass.
+- Reproduce step by step; for each result — an observable artifact (screenshot, video, network response, console, DOM/DB dump).
+- Distinguish: "works as expected" / "bug" / "question to requirements" / "not reproducible" — don't lump them together.
+- Check not only the UI but also the network (status codes, payload, 4xx/5xx handling, retries, no sensitive data) and persistence (reload, re-login).
+- Keep the console open for the whole run: JS errors/warnings, resource 404s, CSP/CORS.
+- Verify post-action state in several layers: UI ↔ network ↔ DB/storage.
+- Isolate the defect: minimal steps, frequency (always/intermittent), environment, build, preconditions; if flaky — repeat N times, record the frequency, don't mask it with a retry without understanding the cause.
 
-**Фиксация / DoD**
-- Каждый ТК со статусом + доказательством: Pass (артефакт), Fail (баг + артефакт), Blocked (причина), Not tested (почему). Blocked ≠ Fail.
-- Дефекты заведены, связаны с тикетом, severity/priority проставлены, шаги и артефакты приложены.
-- Покрытие сверено с AC: каждый AC закрыт ≥1 проверкой; непокрытые — явно с причиной.
-- Прогон зафиксирован: окружение, билд/коммит, браузеры/вьюпорты, дата, исполнитель.
-- Регресс затронутых областей выполнен (или осознанно отложен с фиксацией риска); блокеры эскалированы; вопросы связаны.
-- Новые/обновлённые ТК внесены в TMS; кандидаты на автоматизацию помечены.
-- **Done** = все неблокированные AC проверены с доказательствами, баги заведены, отчёт и статусы ТК актуальны, остаточные риски и непокрытое перечислены честно.
-
----
-
-## 1. Техники тест-дизайна
-
-**Классы эквивалентности (EP)** — разбить вход на классы (валидные/невалидные/спец: пустое, null, пробелы). Один представитель из каждого валидного класса; КАЖДЫЙ невалидный класс отдельно (разные сообщения = разные классы). Числа: отриц./0/полож./дробные/сверх лимита. Строки: латиница/кириллица/цифры/спецсимволы/эмодзи/RTL/регистр. Перечисления: каждый вариант + вне списка. Файлы: разрешённый/запрещённый/пустой/битый. Даты: прошлое/настоящее/будущее/невалидный формат/несуществующая (31.02).
-
-**Граничные значения (BVA) — точные границы ±1.** Для [min..max] проверить ровно: min−1, min, min+1, max−1, max, max+1 (не «маленькое/большое»). Длина строки: 0, 1, min±1, max±1. Граница на 0: −1, 0, 1 (счётчики, остатки, корзина). Деньги: 0.00, мин. платёж, мин−0.01, макс, макс+0.01, округление копеек. Дата/время: 23:59:59→00:00:00, последний день месяца, 29.02 високос/невисокос, переход через полночь/год. Пагинация: 0 элементов, ровно страница, страница+1 элемент, последняя неполная. Возраст/срок: ровно 18 (день в день), ±1 день, expiry ровно в момент.
-
-**Таблицы решений** — для бизнес-правил с комбинациями условий. Условия × правила × ожидаемое действие; покрыть каждую значимую комбинацию (не все 2^n); включить невозможные/противоречивые (система отвергает). Применять для: скидок/тарифов/расчётов, доступа к фиче (роль × флаг × подписка × состояние), доступности submit (поле A × поле B × чекбокс), взаимоисключающих условий.
-
-**Переходы состояний (STT)** — для сущности с жизненным циклом (черновик→модерация→опубликовано→архив→удалено). Проверить каждый разрешённый переход и КАЖДЫЙ запрещённый (событие в недопустимом состоянии → блок). Переходы по таймауту/системному событию (автоотмена, истечение сессии); действия, недопустимые в текущем состоянии (редактировать опубликованное, оплатить отменённое); циклы/возвраты; состояние после прерывания; конкурентные переходы двух пользователей.
-
-**Pairwise / комбинаторика** — когда параметров >3 и полный перебор нереален (ОС × браузер × роль × язык × тема). Сгенерировать набор, покрывающий все пары (PICT/allpairspy); вручную добавить критичные бизнес-связки, которые pairwise может пропустить; проверить дефолты каждого параметра.
-
-**Error guessing** — для зрелой/легаси-функциональности по слабым местам: двойной/тройной клик, отправка до завершения валидации, спецсимволы/инъекции, очень длинный ввод (10k+), вставка большого текста, пробелы/zero-width, эмодзи, autofill, медленная сеть, Back после успеха, F5 на промежуточном шаге, правка payload в DevTools в обход UI, действие с истёкшим токеном.
-
-**Дополнительно:** причинно-следственный анализ (AND/OR/NOT между условиями, каскадные/зависимые поля); CRUD-матрица как базовый каркас для любой сущности; матрица доступов (роль × действие × ресурс) + проверка серверной защиты. **Всегда:** позитив (валидные классы, разрешённые переходы) + негатив (невалидные классы, запрещённые переходы, обход UI).
-
-**Выбор техники:** диапазон/лимит → BVA+EP; много параметров → pairwise; комбинации условий → таблица решений; жизненный цикл → STT; зависимые условия → cause-effect; сущность с данными → CRUD; легаси → error guessing.
+**Recording / DoD**
+- Every test case with a status + evidence: Pass (artifact), Fail (bug + artifact), Blocked (reason), Not tested (why). Blocked ≠ Fail.
+- Defects filed, linked to the ticket, severity/priority set, steps and artifacts attached.
+- Coverage reconciled with AC: every AC covered by ≥1 check; uncovered ones — explicit with a reason.
+- Run recorded: environment, build/commit, browsers/viewports, date, executor.
+- Regression of affected areas done (or deliberately deferred with the risk recorded); blockers escalated; questions linked.
+- New/updated test cases entered into the TMS; automation candidates flagged.
+- **Done** = all non-blocked ACs checked with evidence, bugs filed, report and test case statuses up to date, residual risks and uncovered items listed honestly.
 
 ---
 
-## 2. Справочники (`references/`) — обязательное чтение по типу задачи
+## 1. Test design techniques
 
-Детальные чек-листы вынесены в `references/`. **До составления плана прочитай целиком (Read) каждый файл, релевантный задаче** — не выборочно и не по памяти; план без прочитанного справочника считается неполным.
+**Equivalence partitioning (EP)** — split input into classes (valid/invalid/special: empty, null, whitespace). One representative from each valid class; EVERY invalid class separately (different messages = different classes). Numbers: negative/0/positive/fractional/over the limit. Strings: Latin/Cyrillic/digits/special characters/emoji/RTL/case. Enumerations: each option + out-of-list. Files: allowed/forbidden/empty/corrupted. Dates: past/present/future/invalid format/nonexistent (Feb 31).
 
-| Файл | Когда читать | Что внутри |
+**Boundary value analysis (BVA) — exact boundaries ±1.** For [min..max] check exactly: min−1, min, min+1, max−1, max, max+1 (not "small/large"). String length: 0, 1, min±1, max±1. Boundary at 0: −1, 0, 1 (counters, balances, cart). Money: 0.00, min payment, min−0.01, max, max+0.01, cent rounding. Date/time: 23:59:59→00:00:00, last day of month, Feb 29 leap/non-leap, crossing midnight/year. Pagination: 0 items, exactly one page, page+1 items, last partial page. Age/term: exactly 18 (to the day), ±1 day, expiry exactly at the moment.
+
+**Decision tables** — for business rules with condition combinations. Conditions × rules × expected action; cover every significant combination (not all 2^n); include impossible/contradictory ones (system rejects). Apply to: discounts/tariffs/calculations, feature access (role × flag × subscription × state), submit availability (field A × field B × checkbox), mutually exclusive conditions.
+
+**State transitions (STT)** — for an entity with a lifecycle (draft→moderation→published→archived→deleted). Check every allowed transition and EVERY forbidden one (event in an invalid state → blocked). Transitions by timeout/system event (auto-cancel, session expiry); actions invalid in the current state (edit a published item, pay a canceled one); cycles/returns; state after interruption; concurrent transitions by two users.
+
+**Pairwise / combinatorics** — when there are >3 parameters and full enumeration is unrealistic (OS × browser × role × language × theme). Generate a set covering all pairs (PICT/allpairspy); manually add critical business combinations pairwise may miss; check the defaults of each parameter.
+
+**Error guessing** — for mature/legacy functionality via weak spots: double/triple click, submit before validation completes, special characters/injections, very long input (10k+), pasting large text, whitespace/zero-width, emoji, autofill, slow network, Back after success, F5 on an intermediate step, editing the payload in DevTools bypassing the UI, action with an expired token.
+
+**Additionally:** cause-effect analysis (AND/OR/NOT between conditions, cascading/dependent fields); a CRUD matrix as the base skeleton for any entity; an access matrix (role × action × resource) + server-side enforcement check. **Always:** positive (valid classes, allowed transitions) + negative (invalid classes, forbidden transitions, UI bypass).
+
+**Technique selection:** range/limit → BVA+EP; many parameters → pairwise; condition combinations → decision table; lifecycle → STT; dependent conditions → cause-effect; entity with data → CRUD; legacy → error guessing.
+
+---
+
+## 2. References (`references/`) — mandatory reading per task type
+
+Detailed checklists live in `references/`. **Before drafting the plan, read (Read) each file relevant to the task in full** — not selectively and not from memory; a plan made without reading the reference counts as incomplete.
+
+| File | When to read | What's inside |
 |---|---|---|
-| `references/frontend.md` | Любая задача с UI | Поля/формы (маски, лимиты, paste/autofill), визуал и все состояния элементов, сверка с Figma, токены, overflow, адаптив и кросс-браузер (канонические разрешения) |
-| `references/backend.md` | API / сервисы / БД / интеграции | HTTP-методы и коды, схемы/контракты, пагинация, идемпотентность, PATCH, БД (целостность, транзакции, конкурентность, миграции), AuthN/AuthZ/IDOR/мультитенантность, очереди/вебхуки/cron, нагрузка и устойчивость, OWASP API Top 10 |
-| `references/cross-cutting.md` | Почти всегда (фронт и бэк вместе) | Сетевые ошибки и моки, consistency UI↔Backend, сессии/storage/мультивкладки, навигация/deeplink, время/TZ/i18n, перф и консоль, security с фронта, файлы/экспорт, поиск/фильтры, платежи, аналитика |
-| `references/artifacts.md` | Перед фиксацией результатов и багов | Доказательства, HAR/консоль, структура баг-репорта, severity vs priority, расхождения с макетом, трекер/TMS, сводный отчёт прогона |
-| `references/common-misses.md` | Всегда — перед финальным отчётом | Чек-лист «частые пропуски»: финальная самопроверка полноты прогона |
-| `references/fan-out.md` | Крупный прогон: длинный флоу, полный регресс экрана, сверка прод/тест | Как дробить дотошный прогон на параллельных субагентов по осям: сбор артефактов оркестратором → fan-out → синтез. Про способ исполнения, не класс проверок |
+| `references/frontend.md` | Any task with UI | Fields/forms (masks, limits, paste/autofill), visuals and all element states, Figma comparison, tokens, overflow, responsive layout and cross-browser (canonical resolutions) |
+| `references/backend.md` | API / services / DB / integrations | HTTP methods and codes, schemas/contracts, pagination, idempotency, PATCH, DB (integrity, transactions, concurrency, migrations), AuthN/AuthZ/IDOR/multi-tenancy, queues/webhooks/cron, load and resilience, OWASP API Top 10 |
+| `references/cross-cutting.md` | Almost always (frontend and backend together) | Network errors and mocks, UI↔Backend consistency, sessions/storage/multi-tab, navigation/deeplink, time/TZ/i18n, perf and console, security from the frontend, files/export, search/filters, payments, analytics |
+| `references/artifacts.md` | Before recording results and bugs | Evidence, HAR/console, bug report structure, severity vs priority, deviations from the design, tracker/TMS, run summary report |
+| `references/common-misses.md` | Always — before the final report | "Common misses" checklist: final self-check of run completeness |
+| `references/fan-out.md` | Large run: long flow, full screen regress, production/test comparison | How to split a meticulous run across parallel subagents per axis: orchestrator collects artifacts → fan-out → synthesis. About the execution method, not a check class |
 
-Минимальные наборы: UI-задача → frontend + cross-cutting (+artifacts при заведении багов); API/бэк → backend + cross-cutting; полный E2E/релиз → все. Крупный прогон / длинный флоу → дополнительно `fan-out.md` на этапе выполнения. `common-misses.md` — всегда последним, перед выводом отчёта.
+Minimal sets: UI task → frontend + cross-cutting (+artifacts when filing bugs); API/backend → backend + cross-cutting; full E2E/release → all. Large run / long flow → additionally `fan-out.md` at the execution stage. `common-misses.md` — always last, before producing the report.
 
 ---
 
-> Применяй технику и трек по контексту задачи. Для каждой реальной задачи сверяйся с её требованиями и макетами, а не с этим списком как с истиной — список напоминает классы проверок, но не заменяет AC и source of truth.
+> Apply the technique and track by task context. For each real task, check against its requirements and designs, not against this list as the truth — the list reminds you of check classes but does not replace AC and the source of truth.
