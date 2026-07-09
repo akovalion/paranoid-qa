@@ -51,6 +51,17 @@ Russian versions live in [`ru/skills/`](ru/skills/) — copy from there instead 
 
 Claude picks the skills up automatically based on your request, or invoke them explicitly: "test this form with the testing skill", `/test-review`, `/bug-report`.
 
+## MCP servers
+
+The skills use whatever tools your Claude Code session has. For the full experience:
+
+- [Playwright MCP](https://github.com/microsoft/playwright-mcp) — required for UI runs of the `testing` skill: drives the browser, captures network payloads. The README demo needs it.
+- [Atlassian MCP](https://github.com/sooperset/mcp-atlassian) — used by `bug-report` (creates Jira issues) and for pulling ticket context into `test-cases`.
+- [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) — optional addition: console, performance traces.
+- A TMS MCP (e.g. a Zephyr Scale community server) — optional, only for creating test cases directly; CSV export works without it.
+
+No MCP is needed for backend/API checks (the agent uses curl from the shell), CSV export, or reading the checklists.
+
 ## Adapting to your project
 
 The pack works out of the box, but gets stronger with tuning:
@@ -62,7 +73,7 @@ The pack works out of the box, but gets stronger with tuning:
 
 ## Limitations
 
-- `bug-report` targets Jira via the [Atlassian MCP](https://github.com/sooperset/mcp-atlassian); `test-cases` can produce CSV without any MCP.
+- `bug-report` is Jira-only for now (via the Atlassian MCP, see above).
 - Accessibility (a11y/WCAG) is deliberately out of scope; hover/focus/disabled states are covered.
 - The pack targets web (desktop + mobile responsive); mobile-native is on the roadmap as a checklist.
 
