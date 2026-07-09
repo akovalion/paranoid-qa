@@ -1,0 +1,11 @@
+{
+  "name": "paranoid-qa",
+  "description": "Turn Claude Code into a meticulous QA engineer: every Pass/Fail verdict must cite an observed artifact. Testing framework with ~1000 checks, Playwright test review, test-case generation, Jira bug reports.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Aleksei Kovalev"
+  },
+  "homepage": "https://github.com/akovalion/paranoid-qa",
+  "license": "MIT",
+  "keywords": ["qa", "testing", "playwright", "test-review", "evidence"]
+}

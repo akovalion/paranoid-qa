@@ -1,0 +1,11 @@
+{
+  "name": "paranoid-qa-ru",
+  "description": "Русская версия paranoid-qa: дотошный QA-агент с доказательной дисциплиной - каждый вердикт только по наблюдённому артефакту. Фреймворк тестирования, ревью Playwright-тестов, тест-кейсы, баг-репорты в Jira.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Aleksei Kovalev"
+  },
+  "homepage": "https://github.com/akovalion/paranoid-qa",
+  "license": "MIT",
+  "keywords": ["qa", "testing", "playwright", "test-review", "evidence"]
+}

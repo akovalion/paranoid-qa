@@ -1,0 +1,23 @@
+{
+  "name": "paranoid-qa",
+  "description": "QA skills for Claude Code with evidence discipline: every verdict must cite an observed artifact. English and Russian versions.",
+  "owner": {
+    "name": "Aleksei Kovalev"
+  },
+  "plugins": [
+    {
+      "name": "paranoid-qa",
+      "source": "./",
+      "description": "English skills: evidence-disciplined testing framework, Playwright test review, test cases, Jira bug reports",
+      "category": "testing",
+      "tags": ["qa", "testing", "playwright"]
+    },
+    {
+      "name": "paranoid-qa-ru",
+      "source": "./ru",
+      "description": "Русская версия скиллов: дотошное тестирование с доказательной дисциплиной",
+      "category": "testing",
+      "tags": ["qa", "testing", "playwright", "russian"]
+    }
+  ]
+}

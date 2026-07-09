@@ -38,7 +38,17 @@
 
 ## Install
 
-Requires [Claude Code](https://claude.com/claude-code). Skills install by copying:
+Requires [Claude Code](https://claude.com/claude-code).
+
+**As a plugin — one command, versioned updates (recommended):**
+
+```
+/plugin marketplace add akovalion/paranoid-qa
+/plugin install paranoid-qa@paranoid-qa        # English skills
+/plugin install paranoid-qa-ru@paranoid-qa     # Russian skills
+```
+
+**Or by copying — if you want to edit the skills as your own:**
 
 ```bash
 git clone https://github.com/akovalion/paranoid-qa.git
@@ -49,7 +59,7 @@ cp -r paranoid-qa/skills/* <project>/.claude/skills/
 
 Russian versions live in [`ru/skills/`](ru/skills/) — copy from there instead if you want the skills in Russian.
 
-Claude picks the skills up automatically based on your request, or invoke them explicitly: "test this form with the testing skill", `/test-review`, `/bug-report`.
+Claude picks the skills up automatically based on your request, or invoke them explicitly: "test this form with the testing skill". Slash form: `/test-review` for the copied install, `/paranoid-qa:test-review` for the plugin install.
 
 ## MCP servers
 
@@ -79,7 +89,7 @@ The pack works out of the box, but gets stronger with tuning:
 
 ## Roadmap
 
-- [ ] Claude Code plugin format (one-command install)
+- [x] Claude Code plugin format (one-command install)
 - [ ] GraphQL API checklist
 - [ ] Mobile-native checklist
 
