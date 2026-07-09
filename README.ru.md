@@ -16,8 +16,8 @@
 
 | Скилл | Что делает |
 |---|---|
-| [`testing`](ru/skills/testing/SKILL.md) | Флагман. Универсальный фреймворк тестирования (frontend + backend): доказательная дисциплина, техники тест-дизайна до точных границ (BVA/EP/таблицы решений/STT/pairwise), ~1000 строк справочников-чеклистов, мультиагентный fan-out для больших прогонов |
-| [`test-review`](ru/skills/test-review/SKILL.md) | Ревью Playwright-автотестов до коммита: severity (Blocker→Nit), привязка к строкам, готовые фиксы `❌ было → ✅ стало`, каталог из 30+ правил со ссылками на официальную доку |
+| [`testing`](ru/skills/testing/SKILL.md) | Флагман. Универсальный фреймворк тестирования (frontend + backend): доказательная дисциплина, техники тест-дизайна до точных границ (BVA/EP/таблицы решений/STT/pairwise), почти 1000 отдельных проверок в справочниках, мультиагентный fan-out для больших прогонов |
+| [`test-review`](ru/skills/test-review/SKILL.md) | Ревью Playwright-автотестов до коммита: severity (Blocker→Nit), привязка к строкам, готовые фиксы `❌ было → ✅ стало`, каталог из 40+ правил со ссылками на официальную доку |
 | [`test-cases`](ru/skills/test-cases/SKILL.md) | Генерация тест-кейсов по best practice: атомарные шаги, ОР из требований (не из реализации), CSV для импорта в Zephyr Scale (Option 1) или прямое создание через MCP вашей TMS |
 | [`interview`](ru/skills/interview/SKILL.md) | Структурированный сбор требований, когда задача описана «на словах»: 2-3 раунда вопросов → готовый документ с AC и edge cases |
 | [`bug-report`](ru/skills/bug-report/SKILL.md) | Баг в Jira за минуту: сбор данных → превью → создание после подтверждения, с обязательными кастомными полями вашего проекта |
@@ -30,7 +30,7 @@
 - [`frontend.md`](ru/skills/testing/references/frontend.md) — поля и маски, все состояния каждого элемента (hover/focus/disabled/loading), сверка с Figma, токены, адаптив, кросс-браузер
 - [`backend.md`](ru/skills/testing/references/backend.md) — HTTP-семантика, контракты, идемпотентность, БД (транзакции, конкурентность, миграции), AuthN/AuthZ/IDOR, очереди/DLQ/вебхуки, OWASP API Top 10
 - [`cross-cutting.md`](ru/skills/testing/references/cross-cutting.md) — сетевые моки, consistency UI↔Backend, сессии, TZ/i18n, платежи, файлы, поиск
-- [`common-misses.md`](ru/skills/testing/references/common-misses.md) — 28 проверок, которые пропускают чаще всего
+- [`common-misses.md`](ru/skills/testing/references/common-misses.md) — 26 проверок, которые пропускают чаще всего
 - [`fan-out.md`](ru/skills/testing/references/fan-out.md) — как дробить большой прогон на параллельных субагентов без потери доказательности
 - [`artifacts.md`](ru/skills/testing/references/artifacts.md) — доказательства, структура баг-репорта, severity vs priority, сводный отчёт
 

@@ -16,8 +16,8 @@
 
 | Skill | What it does |
 |---|---|
-| [`testing`](skills/testing/SKILL.md) | The flagship. A universal testing framework (frontend + backend): evidence discipline, test-design techniques down to exact boundaries (BVA / EP / decision tables / state transitions / pairwise), ~1000 lines of reference checklists, multi-agent fan-out for large runs |
-| [`test-review`](skills/test-review/SKILL.md) | Playwright test review before commit: severity (Blocker→Nit), line-level findings, ready-to-apply fixes `❌ before → ✅ after`, a catalog of 30+ rules with links to the official docs |
+| [`testing`](skills/testing/SKILL.md) | The flagship. A universal testing framework (frontend + backend): evidence discipline, test-design techniques down to exact boundaries (BVA / EP / decision tables / state transitions / pairwise), nearly 1,000 individual checks in the reference files, multi-agent fan-out for large runs |
+| [`test-review`](skills/test-review/SKILL.md) | Playwright test review before commit: severity (Blocker→Nit), line-level findings, ready-to-apply fixes `❌ before → ✅ after`, a catalog of 40+ rules with links to the official docs |
 | [`test-cases`](skills/test-cases/SKILL.md) | Test-case generation by QA best practices: atomic steps, expected results taken from requirements (not from the implementation), CSV for Zephyr Scale import (Option 1) or direct creation via your TMS MCP |
 | [`interview`](skills/interview/SKILL.md) | Structured requirements elicitation when the task is described "in words": 2-3 rounds of questions → a document with AC and edge cases |
 | [`bug-report`](skills/bug-report/SKILL.md) | A Jira bug in a minute: data collection → preview → creation after confirmation, with your project's required custom fields |
@@ -30,7 +30,7 @@
 - [`frontend.md`](skills/testing/references/frontend.md) — inputs and masks, every state of every element (hover/focus/disabled/loading), Figma comparison, design tokens, responsive layout, cross-browser
 - [`backend.md`](skills/testing/references/backend.md) — HTTP semantics, contracts, idempotency, DB (transactions, concurrency, migrations), AuthN/AuthZ/IDOR, queues/DLQ/webhooks, OWASP API Top 10
 - [`cross-cutting.md`](skills/testing/references/cross-cutting.md) — network mocks, UI↔Backend consistency, sessions, TZ/i18n, payments, files, search
-- [`common-misses.md`](skills/testing/references/common-misses.md) — 28 checks that get missed most often
+- [`common-misses.md`](skills/testing/references/common-misses.md) — 26 checks that get missed most often
 - [`fan-out.md`](skills/testing/references/fan-out.md) — how to split a large run across parallel subagents without losing evidence discipline
 - [`artifacts.md`](skills/testing/references/artifacts.md) — evidence, bug-report structure, severity vs priority, run summary report
 
