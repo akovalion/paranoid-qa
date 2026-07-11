@@ -65,7 +65,7 @@ Claude picks the skills up automatically based on your request, or invoke them e
 
 The skills use whatever tools your Claude Code session has. For the full experience:
 
-- [Playwright MCP](https://github.com/microsoft/playwright-mcp) — required for UI runs of the `testing` skill: drives the browser, captures network payloads. The README demo needs it.
+- [Playwright MCP](https://github.com/microsoft/playwright-mcp) — required for UI runs of the `testing` skill: drives the browser, captures network payloads. The README demo needs it. Defaults to Chromium; for the cross-browser checks the skills call for, add a second instance with `--browser webkit` (Safari engine) — and `--device "iPhone 15"` covers mobile emulation.
 - [Atlassian MCP](https://github.com/sooperset/mcp-atlassian) — used by `bug-report` (creates Jira issues) and for pulling ticket context into `test-cases`.
 - [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) — optional addition: console, performance traces.
 - A TMS MCP (e.g. a Zephyr Scale community server) — optional, only for creating test cases directly; CSV export works without it.
