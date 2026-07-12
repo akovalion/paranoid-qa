@@ -1,6 +1,7 @@
 ---
 name: bug-report
 description: Quick bug report in Jira. Invoke via /bug-report. Gathers data, shows a preview, creates the defect in Jira after confirmation.
+disable-model-invocation: true
 allowed-tools:
   - AskUserQuestion
   - mcp__atlassian__jira_create_issue

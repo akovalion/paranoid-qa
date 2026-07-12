@@ -1,6 +1,7 @@
 ---
 name: bug-report
 description: Быстрый баг-репорт в Jira. Вызывай по /bug-report. Собирает данные, показывает превью, создает дефект в Jira после подтверждения.
+disable-model-invocation: true
 allowed-tools:
   - AskUserQuestion
   - mcp__atlassian__jira_create_issue
