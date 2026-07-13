@@ -34,7 +34,7 @@ test.step('Submit', async () => { ... });       // step won't run synchronously
 await expect(page.getByText('Done')).toBeVisible();
 await test.step('Submit', async () => { ... });
 ```
-**Important:** many configs have NEITHER of the needed rules (neither `@typescript-eslint/no-floating-promises` nor `eslint-plugin-playwright/missing-playwright-await`) → lint will miss floating promises; `valid-expect` only catches some `expect` forms. Check the project config; if the rules are absent — **re-read by eye** and suggest adding both.
+**Important:** without eslint-plugin-playwright, lint will not see a floating promise (`valid-expect` covers only some `expect` forms). With recommended enabled, `missing-playwright-await` is already an error and gets caught; but `no-wait-for-timeout`, `no-force-option` and `expect-expect` are only warn there (verified against v2.10.5) — without `--max-warnings 0` they never fail CI, suggest raising them to error. `@typescript-eslint/no-floating-promises` needs type-aware linting. If the rules are missing — **re-read by eye**.
 Source: PW [best-practices#lint-your-tests](https://playwright.dev/docs/best-practices).
 
 ### A3. Race when waiting for network — 🔴
