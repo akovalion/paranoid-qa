@@ -61,6 +61,7 @@ Master checklist "how to test anything" — frontend/UI and backend/services. Do
 - Keep the console open for the whole run: JS errors/warnings, resource 404s, CSP/CORS.
 - Verify post-action state in several layers: UI ↔ network ↔ DB/storage.
 - Isolate the defect: minimal steps, frequency (always/intermittent), environment, build, preconditions; if flaky — repeat N times, record the frequency, don't mask it with a retry without understanding the cause.
+- **Real input vs programmatic input.** Setting values programmatically (`fill()`, `setInputValue`, `.value=`, or an automation "type" that wraps them) may bypass the app's own event pipeline — framework `onChange`/`onBlur`, custom searchable/select components that commit only on option-click. The visible field shows text while the bound state stays empty → a false "required"/validation error (or, conversely, it masks a real one). Confirm any required/validation/selection finding with real user input (click the option, type character-by-character / `pressSequentially`, keyboard) before setting Pass/Fail. If the result depends on how the value was entered, it is not yet evidence.
 
 **Recording / DoD**
 - Every test case with a status + evidence: Pass (artifact), Fail (bug + artifact), Blocked (reason), Not tested (why). Blocked ≠ Fail.
