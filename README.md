@@ -31,7 +31,7 @@
 - [`backend.md`](skills/testing/references/backend.md) — HTTP semantics, contracts, idempotency, DB (transactions, concurrency, migrations), AuthN/AuthZ/IDOR, queues/DLQ/webhooks, OWASP API Top 10
 - [`cross-cutting.md`](skills/testing/references/cross-cutting.md) — network mocks, UI↔Backend consistency, sessions, TZ/i18n, payments, files, search
 - [`common-misses.md`](skills/testing/references/common-misses.md) — 26 checks that get missed most often
-- [`fan-out.md`](skills/testing/references/fan-out.md) — how to split a large run across parallel subagents without losing evidence discipline
+- [`fan-out.md`](skills/testing/references/fan-out.md) — how to split a large run across parallel subagents without losing evidence discipline, including parallel test-case execution with a separate browser per agent (§7.8)
 - [`artifacts.md`](skills/testing/references/artifacts.md) — evidence, bug-report structure, severity vs priority, run summary report
 
 **3. The skills chain into a pipeline.** `interview` (requirements) → `test-cases` (test cases) → `testing` (the run) → `bug-report` (defects) → `test-review` (automated tests before commit).
@@ -69,6 +69,8 @@ The skills use whatever tools your Claude Code session has. For the full experie
 - [Atlassian MCP](https://github.com/sooperset/mcp-atlassian) — used by `bug-report` (creates Jira issues) and for pulling ticket context into `test-cases`.
 - [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) — optional addition: console, performance traces.
 - A TMS MCP (e.g. a Zephyr Scale community server) — optional, only for creating test cases directly; CSV export works without it.
+
+Not an MCP, but a strong companion: [Playwright CLI](https://github.com/microsoft/playwright-cli) (`playwright-cli`) — the `testing` skill leans on it for scripted repeatable flows (the page-map helpers) and for parallel execution with a separate browser process per agent (`fan-out.md` §7.8); it takes `--browser webkit` too.
 
 No MCP is needed for backend/API checks (the agent uses curl from the shell), CSV export, or reading the checklists.
 
