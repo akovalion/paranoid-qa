@@ -98,8 +98,21 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      (a "No middle name" button, a toggle, a clear icon) -
      verify their presence/absence and behavior separately
 
-5. Verification against the implementation:
+5. Verification against the implementation and mockups:
    — When mockups/screenshots exist — verify test cases against them
+   — Figma — ALWAYS look at the mockup with your own eyes, not only its structure:
+     the node dump (`get_figma_data`) gives the grid and layout as text, but part of
+     the content is hidden in component templates (`template=…`) and never reaches the
+     dump; breakpoint differences (desktop/mobile) are invisible in the tree. Also
+     download the rendered frames (`download_figma_images`, desktop + mobile) and view
+     them — only the visual gives exact button/card labels, the full contents of
+     groups, and catches breakpoint mismatches
+   — By default write expected results 1:1 with the mockup (exact headings, texts,
+     full list/group contents, names, icons) — max precision is the default. Relax the
+     content match ONLY when the user explicitly says not to tie to content (e.g. the
+     test environment's content differs from the mockup): then verify the block's
+     presence and key names/headings/icons without hardcoding a rigid full list.
+     Structure, headings and key names are always verified exactly
    — Log discrepancies as bugs or questions
    — If a field is "optional" per requirements
      but the implementation requires input — that is a bug
