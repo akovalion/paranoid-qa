@@ -90,9 +90,14 @@ The pack works out of the box, but gets stronger with tuning:
 - Accessibility (a11y/WCAG) is deliberately out of scope; hover/focus/disabled states are covered.
 - The pack targets web (desktop + mobile responsive); mobile-native is on the roadmap as a checklist.
 
+## Hooks: the enforcement layer (opt-in)
+
+Skills convince the agent to stay disciplined; [`examples/hooks`](examples/hooks) makes the critical rules impossible to skip: `git commit` is denied without a fresh green test run, editing a spec injects a run reminder, and the agent cannot finish a turn with dirty tests. Copy-paste install, never auto-enabled by the plugin. Design notes (deny-when-in-doubt asymmetry, loop fuse) are in the folder README.
+
 ## Roadmap
 
 - [x] Claude Code plugin format (one-command install)
+- [x] Enforcement hooks: commit/stop gates, test-edit tracker ([examples/hooks](examples/hooks))
 - [ ] GraphQL API checklist
 - [ ] Mobile-native checklist
 
