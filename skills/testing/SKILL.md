@@ -74,7 +74,8 @@ Master checklist "how to test anything" — frontend/UI and backend/services. Do
 - Run recorded: environment, build/commit, browsers/viewports, date, executor.
 - Regression of affected areas done (or deliberately deferred with the risk recorded); blockers escalated; questions linked.
 - New/updated test cases entered into the TMS; automation candidates flagged.
-- **Done** = all non-blocked ACs checked with evidence, bugs filed, report and test case statuses up to date, residual risks and uncovered items listed honestly.
+- **Negative gate (mandatory).** A run is NOT Done until negative and boundary classes are covered and cross-checked against `references/common-misses`; the report must include a "Negatives" section with a result per class or an explicit reason for skipping. "Simple/navigational object" is no excuse to skip negatives: a happy-path-only run is incomplete.
+- **Done** = all non-blocked ACs checked with evidence, negatives/boundaries covered (or skip justified), bugs filed, report and test case statuses up to date, residual risks and uncovered items listed honestly.
 
 ---
 
