@@ -61,7 +61,7 @@ Account for the requirements logic and existing mockups. On mismatch between moc
 
 4. Coverage:
    **Negatives are a required artifact, not optional.** Add a dedicated "Negative/Boundary" group; in the coverage assessment (section 12) list which negative classes are covered and which are consciously skipped (with a reason). A positive-only set is incomplete, even if the object looks simple/navigational.
-   **Overlays/modals/panels — mini-checklist:** scroll lock (position preserved, background not scrollable, scrollbar-width compensation with no "jump"), close via ×/Esc/backdrop click/Back, focus trap and focus return to the trigger, deep-link and reload (state in URL), double-click/spam, resize while open, overlay stacking.
+   **Overlays/modals/panels (an example pack for one object type):** scroll lock (position preserved, background not scrollable, scrollbar-width compensation with no "jump"), close via ×/Esc/backdrop click/Back, deep-link and reload (state in URL), double-click/spam, resize while open, overlay stacking. Other object types have their own negative pack (forms, lists, navigation, APIs; see references).
    Include in coverage:
    — Positive scenarios
    — Negative scenarios
