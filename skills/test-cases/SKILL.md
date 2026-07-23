@@ -82,6 +82,8 @@ Account for the requirements logic and existing mockups. On mismatch between moc
    — Run checks at these resolutions (if the task involves UI/responsive layout):
      Desktop: 1920x1080, 1536x864, 2560x1440
      Mobile: 414x896, 360x800, 393x873, 430x926
+     Tablet: 768x1024, 1024x768
+   — **Layout integrity at EVERY breakpoint — for ANY object, not just modals:** nothing clipped vertically or horizontally or running off the edges; every element, text, icon and button visible and reachable; scroll when content exceeds the viewport (internal scroll for overlays); composition and placement verified against the mockup for THAT specific breakpoint (no item should disappear, move, or flip its icon side). Modals/overlays are just one instance.
    — Form reuse:
      • functionality after a successful submit and return
        (a "Submit another" button, etc.)
