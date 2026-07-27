@@ -84,6 +84,7 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      Mobile: 414x896, 360x800, 393x873, 430x926
      Tablet: 768x1024, 1024x768
    — **Layout integrity at EVERY breakpoint — for ANY object, not just modals:** nothing clipped vertically or horizontally or running off the edges; every element, text, icon and button visible and reachable; scroll when content exceeds the viewport (internal scroll for overlays); composition and placement verified against the mockup for THAT specific breakpoint (no item should disappear, move, or flip its icon side). Modals/overlays are just one instance.
+   — **Verify alignment geometrically, not by eye:** for "centered" — the element's center matches the container/viewport center (tolerance ~1-2px); for left/right — the edge offsets; for symmetry — equal paired margins. Presence ≠ correct position. At extreme widths (2560+/320) check both overflow AND centering/alignment — that's where the layout math most often breaks (fixed left, max-width container, grid, absolute).
    — Form reuse:
      • functionality after a successful submit and return
        (a "Submit another" button, etc.)
