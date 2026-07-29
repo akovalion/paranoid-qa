@@ -117,6 +117,8 @@ Each item — what to look for; the violation's severity in parentheses. Expande
 - [ ] `retries`/`mode: serial`/an increased timeout are not used as a "cure" for flake. Quarantine is acceptable only temporarily, with a ticket link. (🟠)
 - [ ] `try/catch` does not swallow action/assert failures (auto-waiting is built in; `.catch()` hides the bug). (🟠)
 - [ ] A pre-release test (written before the feature ships) **fails honestly**, not hidden behind `skip`/a flag. (🟠)
+- [ ] A failing test was **diagnosed before it was fixed**: product bug or intended change? Evidence, not a guess — *when* it broke (run history; a group of tests going red on the same date is a release, not content drift), the same element *compared across environments* (present on staging, gone on production → production regression; absent on both → shipped deliberately), and *internal asymmetry* (visible on mobile but not on desktop, present in the DOM but hidden by CSS, only one A/B branch). Verdict "bug" → report it and mark that assertion `test.fail` with a ticket, do not retrofit the assertion to the current DOM. (🔴)
+- [ ] The fix does not **weaken the oracle** to go green: `toBeVisible()` → `toBeAttached()` (a CSS-hidden element then passes), a targeted assert swapped for a lenient counter, a check deleted citing "covered elsewhere" without reading that spec. Silencing the signal is not a fix. (🔴)
 
 ### I. Special cases by test type
 - [ ] **API:** verify status AND body; request identifiers — a fresh `randomUUID()` from the built-in `crypto` per request (do not pull in the `uuid` package if the project does not have it); rate limit accounted for; cleanup of created entities. (🟠)
@@ -126,6 +128,7 @@ Each item — what to look for; the violation's severity in parentheses. Expande
 ### J. Intent conformance (the oracle actually verifies what is claimed)
 - [ ] The test verifies what the name/description promises, not a surrogate. "Form validation" → inspect the real payload, not just "button is enabled". "Load more" → actual loading of more items and verification, not just the click. (🟠)
 - [ ] Content binding is structural (presence, non-emptiness, `count > 0`, regex), so the test survives copy/price changes — especially for regression tests after a fix. (🟠)
+- [ ] **Thresholds are proportionate to the observed facts.** A counter with a multiple-fold margin (`>= 8` where the page renders 15, `>= 20 links` where the footer has 40) survives losing half the page — a placebo oracle. Where a targeted anchor exists (a block's own class, links into a child section, footer columns), assert on it instead of a page-wide count; set thresholds from measured values on every environment. For each threshold, name the defect it still catches — and the one it no longer catches. (🟠)
 - [ ] The oracle matches the environment's limitation: where the UI does not distinguish 404/5xx (one stub for both) — the check is network-level, not "saw the error text". (🟠)
 
 ### K. Your project's rules (template — fill in for your repository)
