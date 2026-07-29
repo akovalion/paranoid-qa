@@ -26,3 +26,4 @@
 - CSV injection on export (`=`/`+`/`@`); files (double extension, magic bytes, SVG with XSS, ZIP bomb).
 - Consumer/poison message blocking a partition; webhook without signature/dedup; cron during DST (skip/duplicate).
 - Cache key without tenant/locale/permissions (leaking others' data via a shared cache); stale after write.
+- False/stuck validation error: an error shown on a field filled correctly via the intended path (picking a date in the calendar, a dropdown, address autocomplete), or an error that does not clear the instant it's fixed but only after a re-focus/blur — this is a DEFECT, not "cosmetics". Check when the error clears, not only when it appears.
