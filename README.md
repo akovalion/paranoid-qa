@@ -94,10 +94,15 @@ The pack works out of the box, but gets stronger with tuning:
 
 Skills convince the agent to stay disciplined; [`examples/hooks`](examples/hooks) makes the critical rules impossible to skip: `git commit` is denied without a fresh green test run, editing a spec injects a run reminder, and the agent cannot finish a turn with dirty tests. Copy-paste install, never auto-enabled by the plugin. Design notes (deny-when-in-doubt asymmetry, loop fuse) are in the folder README.
 
+## Measure your agent (opt-in)
+
+[`examples/run-stats`](examples/run-stats) parses your local Claude Code transcripts and reports, per work session: active agent hours vs human presence hours, plus defect-candidate lines to review. Local only - nothing leaves your machine.
+
 ## Roadmap
 
 - [x] Claude Code plugin format (one-command install)
 - [x] Enforcement hooks: commit/stop gates, test-edit tracker ([examples/hooks](examples/hooks))
+- [x] Session stats collector: agent vs human hours from transcripts ([examples/run-stats](examples/run-stats))
 - [ ] GraphQL API checklist
 - [ ] Mobile-native checklist
 
