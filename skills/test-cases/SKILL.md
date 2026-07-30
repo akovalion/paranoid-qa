@@ -11,6 +11,26 @@ Write test cases per the rules below. First prepare them in an md file for valid
 
 Account for the requirements logic and existing mockups. On mismatch between mockup and implementation — log a question for the analyst.
 
+0. Source completeness and honest limitations:
+   — Before generating, collect ALL sources and track their status explicitly. In the
+     final report include a source table: ticket / ticket attachments / linked issues /
+     wiki (Confluence) / Figma node dump / visual review of ALL frames / Figma comments /
+     implementation (if any) — for each: studied | not studied | what blocked it.
+     "Not studied" with no reason and no workaround plan is an unacceptable report state.
+   — Hit a tool limitation (truncated MCP response, unreachable file, crashed subagent)?
+     Do NOT degrade silently: tell the user immediately and propose a workaround.
+     Typical example: tracker MCP truncates ticket attachments by response size — the
+     same files often live on linked wiki pages, where a tool that saves the file to
+     disk in full can fetch them (for Confluence — `confluence_download_attachment`).
+   — A subagent's self-report ("read everything, no gaps") is not evidence: spot-check
+     the facts your expected results are built on (texts, field sets, labels) against
+     the primary source (frame visual, file, live system).
+   — Figma comments are not available via MCP (`get_figma_data` does not return them):
+     BEFORE generating test cases, explicitly ask the user for the mockup comments
+     (as text or screenshots) — they often carry corrections on top of the mockup
+     (error texts, removed fields, final wording). Until you have them, that source
+     stays open, and the report says so.
+
 1. Test case format:
    — Name — short and clear (object: essence of the check, e.g. "Calendar
      opening", "List pagination"). No URLs, selectors, or technical details
@@ -109,9 +129,14 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      the node dump (`get_figma_data`) gives the grid and layout as text, but part of
      the content is hidden in component templates (`template=…`) and never reaches the
      dump; breakpoint differences (desktop/mobile) are invisible in the tree. Also
-     download the rendered frames (`download_figma_images`, desktop + mobile) and view
-     them — only the visual gives exact button/card labels, the full contents of
-     groups, and catches breakpoint mismatches
+     download and view ALL frames of the object — every screen/state, desktop AND
+     mobile (`download_figma_images`). Sampling "key" frames is forbidden: mismatches
+     live precisely in the unviewed ones (filled states, mobile variants, modals).
+     Only the visual gives exact button/card labels, the full contents of groups, and
+     catches breakpoint mismatches; never derive alignment/button widths from the text
+     dump — only from the image. Log the viewed frames in the source table (section 0);
+     mockup demo data that contradicts its own validation (Cyrillic in a "Latin only"
+     field) goes to the analyst questions
    — By default write expected results 1:1 with the mockup (exact headings, texts,
      full list/group contents, names, icons) — max precision is the default. Relax the
      content match ONLY when the user explicitly says not to tie to content (e.g. the
