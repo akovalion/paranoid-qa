@@ -78,6 +78,14 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      take only exact element names from the implementation; the expected
      BEHAVIOR comes from requirements and mockups. If the implementation
      diverges from the requirements — that is a bug or a question for the analyst, not a basis for the expected result.
+   — FORBIDDEN in test cases: wording like "capture on the first run", "clarify
+     against the implementation", "verify with the implementation" — it turns
+     testing into documenting whatever was built. An unknown text/behavior is a
+     question for the analyst BEFORE the run (section 11); the expected result
+     states the observable expected meaning. The only exception is taking a
+     reference from a working PROD implementation of the same requirement (e.g.
+     the same validation text on a live form), when the analyst has explicitly
+     confirmed the requirement is unchanged.
 
 4. Coverage:
    **Negatives are a required artifact, not optional.** Add a dedicated "Negative/Boundary" group; in the coverage assessment (section 12) list which negative classes are covered and which are consciously skipped (with a reason). A positive-only set is incomplete, even if the object looks simple/navigational.
@@ -104,7 +112,7 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      Mobile: 414x896, 360x800, 393x873, 430x926
      Tablet: 768x1024, 1024x768
    — **Layout integrity at EVERY breakpoint — for ANY object, not just modals:** nothing clipped vertically or horizontally or running off the edges; every element, text, icon and button visible and reachable; scroll when content exceeds the viewport (internal scroll for overlays); composition and placement verified against the mockup for THAT specific breakpoint (no item should disappear, move, or flip its icon side). Modals/overlays are just one instance.
-   — **Verify alignment geometrically, not by eye:** for "centered" — the element's center matches the container/viewport center (tolerance ~1-2px); for left/right — the edge offsets; for symmetry — equal paired margins. Presence ≠ correct position. At extreme widths (2560+/320) check both overflow AND centering/alignment — that's where the layout math most often breaks (fixed left, max-width container, grid, absolute).
+   — **Verify alignment geometrically, not by eye:** for "centered" — the element's center matches the container/viewport center (tolerance ~1-2px); for left/right — the edge offsets; for symmetry — equal paired margins. Presence ≠ correct position. At extreme widths (2560+ and the project's minimum supported mobile width, usually 360) check both overflow AND centering/alignment — that's where the layout math most often breaks (fixed left, max-width container, grid, absolute).
    — Form reuse:
      • functionality after a successful submit and return
        (a "Submit another" button, etc.)

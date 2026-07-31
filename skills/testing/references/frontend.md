@@ -30,8 +30,8 @@
 
 ### 2.3 Responsive and Cross-Browser
 - **Canonical Desktop resolutions:** 1920×1080 (reference), 1536×864 (common laptop, 125% scale), 2560×1440 (2K — stretching, container max-width, side margins); additionally 1366×768, 1440×900.
-- **Canonical Mobile:** 414×896 (iPhone 11/XR), 360×800 (average Android), 393×873 (Pixel 7), 430×926 (iPhone 14/15 Pro Max); additionally 320px (minimum, frequent overflow source), 768×1024 (iPad, tablet/desktop boundary).
-- **Breakpoints:** render exactly at the boundaries (767/768, 1023/1024, 1279/1280) — no "jumps", clipping, or duplicate desktop+mobile menus; smooth resize 320→1920 (the reflow moment, no overlaps/collapse to 0).
+- **Canonical Mobile:** 414×896 (iPhone 11/XR), 360×800 (average Android), 393×873 (Pixel 7), 430×926 (iPhone 14/15 Pro Max); additionally 768×1024 (iPad, tablet/desktop boundary). Take the minimum tested width from the project's requirements (usually 360; narrower ones like 320 — only if the project explicitly supports them).
+- **Breakpoints:** render exactly at the boundaries (767/768, 1023/1024, 1279/1280) — no "jumps", clipping, or duplicate desktop+mobile menus; smooth resize from the minimum supported width up to 1920 (the reflow moment, no overlaps/collapse to 0).
 - **Horizontal scroll (critical):** no horizontal scroll on body/containers at any resolution (fixed px widths, long URLs, wide tables, negative margins, `100vw` with a scrollbar, images without `max-width:100%`).
 - **Reflow:** multi-column → single column (visual order = DOM, `order` not broken); sidebar moves below/into the burger; menu → burger; tabs → accordion/scroll; hiding labels/columns, table replaced by cards, filters into a bottom sheet; primary buttons full width; sticky CTA does not cover content/safe-area.
 - **Touch:** targets ≥44×44 (iOS)/48×48 (Android) with spacing; swipes/sliders/pull-to-refresh/long-press; momentum scroll; hover functionality reachable via tap, no stuck hover.
