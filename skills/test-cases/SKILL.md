@@ -145,6 +145,15 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      dump — only from the image. Log the viewed frames in the source table (section 0);
      mockup demo data that contradicts its own validation (Cyrillic in a "Latin only"
      field) goes to the analyst questions
+   - **When RUNNING test cases against the implementation the same rule applies as for
+     the mockup: LOOK WITH YOUR EYES.** DOM, `innerText`, the accessibility snapshot and
+     computed styles give structure, text and behavior, but are blind to appearance -
+     that is how you miss the wrong component variant (a grey button instead of white
+     with a border), broken spacing, fonts, radii, swapped illustrations. For every
+     state you verify, take a screenshot of the implementation and open it next to the
+     mockup frame; run hover/focus/active separately - they do not exist in the DOM.
+     A screenshot that failed to save blocks the step. Reporting "verified" without
+     having looked at a single screenshot of the implementation is not acceptable
    — By default write expected results 1:1 with the mockup (exact headings, texts,
      full list/group contents, names, icons) — max precision is the default. Relax the
      content match ONLY when the user explicitly says not to tie to content (e.g. the
