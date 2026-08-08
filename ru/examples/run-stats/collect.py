@@ -50,6 +50,7 @@ MIN_TOOL_CALLS = 3
 
 TS = re.compile(r'"timestamp":"([0-9T:.\-+Z]{19,32})"')
 SINCE = sys.argv[1] if len(sys.argv) > 1 else '1970-01-01'
+print("ВАЖНО: кандидаты - неподтверждённые подсказки; считайте только ФИНАЛЬНЫЕ вердикты сессий, не промежуточные итоги.")
 
 
 def parse_ts(raw):

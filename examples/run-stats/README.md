@@ -27,6 +27,12 @@ Output per work session:
 - **Defect candidates are hints, not counts.** The script surfaces lines to
   read; confirming what is a real finding, who found it, and what turned out
   false stays a human judgement.
+- **Count final verdicts, not mid-session reports.** An agent's in-flight
+  defect lists are almost always inflated: candidates get withdrawn by its own
+  later checks and by human review. In our own dataset an agent reported "38
+  defects" mid-session; the session's final, human-reviewed verdict was 15.
+  Take numbers only from the end state of a session, and treat any total the
+  agent itself announces as a claim to verify.
 - **Transcripts rotate** (30 days by default). Archive the raw `.jsonl` files
   if the dataset should outlive the rotation.
 
