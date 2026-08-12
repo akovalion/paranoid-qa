@@ -265,3 +265,40 @@ Distinguish two types of questions about ambiguities:
    — If the TMS renders descriptions as HTML (e.g. Zephyr Scale DC) — format
      the URL as a clickable link `<a href="https://...">https://...</a>`,
      so the link in the test case is clickable.
+
+14. Parallel execution via subagents (pays off from ~10 test cases up):
+
+   **Delegate — mechanical work where the text already exists:**
+   — **Reading large exports.** When a design or API export does not fit into the tool
+     response and lands in a file, do not grep it selectively: you will miss whole frames.
+     One subagent per node, with an explicit task — "read the file IN FULL in ~160-line
+     chunks via offset/limit; return the complete list of items with VERBATIM texts,
+     sizes, spacings, component states and designer annotations". Run all nodes in parallel.
+   — **Uploading test cases to the TMS** from the approved md file: 6-8 test cases
+     per subagent, about 4 subagents at once.
+   — **Bulk status changes** (Draft → Approved after review) and **filling in run
+     results**: split the list of keys between subagents.
+
+   **Do not delegate — here an error costs more than the speed gains:**
+   — the wording of names, steps and expected results: one voice and precision
+     matter more than speed;
+   — the folder choice, the decision to create a section, the list of questions
+     for the analyst;
+   — the final verification.
+
+   **Uploader subagent prompt — the mandatory minimum:**
+   — a verbatim call template with the project key, folder path (copied character for
+     character from the folder API), custom fields, issue links and priority already
+     filled in;
+   — **"insert an HTML link as a real `<a href="...">...</a>` tag, do NOT escape it
+     into `&lt;a&gt;`"** — otherwise the TMS shows the tag as plain text;
+   — "do not rewrite, shorten or improve the test case text — transfer it verbatim
+     from the md file";
+   — "if a create call returns an error or an unclear result, do NOT retry it
+     (duplicate risk) — report the key back instead";
+   — return the list of created keys in test case order.
+
+   **Verification after the upload is mandatory and is done by you, not by the subagent:**
+   search test cases by folder (count, priorities, type) plus fetch 1-2 test cases in
+   full (link rendered as a tag, steps in place, issue links set). A subagent's
+   "everything created" report is not evidence.
