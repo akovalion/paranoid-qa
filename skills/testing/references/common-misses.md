@@ -7,7 +7,7 @@
 - Handler self-cancellation (the button reacts, but the final state ≠ the label's promise): a second call cancels the first via its side effect (set a flag → the next store setter reset it); `useEffect`/tab switch resets what was just set; "Save/Delete/Send" only validates or sets a flag without an API call; the `if(state)` branch is always false. Verify the final state across all layers (UI ↔ store/storage ↔ network), not the mere fact of a reaction.
 - Empty list / exactly 1 item / 1000+ items (rendering, pagination, virtualization, perf).
 - Emoji (ZWJ sequences) / RTL / special characters / surrogate pairs; grapheme clusters in length counters.
-- Zoom 200% (reflow into a single column without horizontal scroll), enlarged system font.
+- Long content and extreme widths: wrapping without clipping, no horizontal scroll at the narrowest and widest supported viewport.
 - DST / timezones / clock skew / Feb 29 / day boundary / midnight UTC vs local / "5 minutes ago" never in the future.
 - IDOR (someone else's id in the request while the button is hidden in the UI), vertical escalation (admin endpoint), mass assignment.
 - Paste (trim/format stripping) / autofill not triggering live validation / drag-n-drop of text.
@@ -21,7 +21,7 @@
 - Server-side validation with the client bypassed (payload edited in DevTools slips past UI checks).
 - Numbers > 2^53 (id as string, precision loss in JS); money in float (losing cents).
 - Empty array vs `null` vs missing field in the response — the UI handles all three; unknown enum value → fallback without a crash.
-- prefers-reduced-motion / prefers-color-scheme / forced-colors; pinch-to-zoom not blocked.
+- prefers-color-scheme (dark theme). Accessibility (WCAG, focus ring, aria, forced-colors, reduced-motion) is out of scope here — use a dedicated a11y checklist.
 - Touch: stuck hover, hover-only functionality unreachable by tap, tap targets <44px.
 - CSV injection on export (`=`/`+`/`@`); files (double extension, magic bytes, SVG with XSS, ZIP bomb).
 - Consumer/poison message blocking a partition; webhook without signature/dedup; cron during DST (skip/duplicate).
