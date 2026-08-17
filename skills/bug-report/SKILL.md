@@ -24,6 +24,7 @@ The values below are an example; adapt them to your instance (right here or in t
   - `customfield_XXXXX` (Team): `"..."`
   - `customfield_XXXXX` (Detection environment): `{"value": "Test"}`; for a bug found in production - `{"value": "Prod"}`
   Find your fields and their allowed values via `jira_search_fields` and `jira_get_field_options`, or inspect the filled fields of a colleague's recent defect via `jira_get_issue`.
+  Two common traps. First, the write format does not match the read format - some fields accept a plain string only and reject `{"value": ...}` with a "value not found" error, even though reading the very same field returns an object; do not copy what you read straight back into a write. Second, the security level field (`security`) is mandatory in restricted projects but is not always named in the error message. Once you have a working set, record it in your local skill or project memory - otherwise every defect starts with the same investigation.
 
 ## 1. Data gathering
 
