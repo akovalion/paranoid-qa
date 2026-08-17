@@ -24,7 +24,7 @@ Master checklist "how to test anything" — frontend/UI and backend/services. Do
 - Read the ticket in full: description, AC/Gherkin, comments, attachments, linked issues (blocks/relates/epic), component, release.
 - Pin the source of truth for each requirement (AC → spec/Confluence → Figma → production behavior) and the precedence on conflict.
 - Check Figma: version, mode (desktop/mobile/adaptive), states (default/hover/focus/active/disabled/loading/error/empty), component variants, tokens; what is in the design vs what is "implied".
-- Find existing test cases (in your TMS — Zephyr/TestRail/other) and autotests (in the project's autotest repository): reuse, identify gaps, don't duplicate.
+- Find existing test cases (in your TMS — Zephyr/TestRail/other) and autotests (in the project's autotest repository): reuse, identify gaps, don't duplicate. Don't trust TMS statuses blindly — cross-check against the live tests: "Automated" with no existing autotest and "needs automation" on long-covered cases both happen.
 - Capture a production/preprod baseline (how the feature works now — for regression and reproducing bugs on the current version).
 - Clarify the environment: environment instance, access, test accounts/roles, feature flags, data state, build version/commit.
 - Identify integrations and dependencies: external APIs, payment providers, auth, queues — what is mocked, what is real.
