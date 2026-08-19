@@ -23,7 +23,7 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      same files often live on linked wiki pages, where a tool that saves the file to
      disk in full can fetch them (for Confluence — `confluence_download_attachment`).
    — A subagent's self-report ("read everything, no gaps") is not evidence: spot-check
-     the facts your expected results are built on (texts, field sets, labels) against
+     the facts your expected results are built on (texts, field sets, labels, NUMBERS — sizes, spacing, gap) against
      the primary source (frame visual, file, live system).
    — Figma comments are not available via MCP (`get_figma_data` does not return them):
      BEFORE generating test cases, explicitly ask the user for the mockup comments
@@ -147,7 +147,13 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      live precisely in the unviewed ones (filled states, mobile variants, modals).
      Only the visual gives exact button/card labels, the full contents of groups, and
      catches breakpoint mismatches; never derive alignment/button widths from the text
-     dump — only from the image. Log the viewed frames in the source table (section 0);
+     dump — only from the image. NEVER derive NUMERIC SIZES (block heights, spacing,
+     gap) from the dump at all: inside a wrapper frame sits a raster with ITS OWN
+     `dimensions` — often wider and taller than the container, `absolute`, offset and
+     clipped by it; that is the size of the IMAGE, not of the block. Containers with
+     `sizing: hug` do not expose their real height in the dump at all. Verify sizes
+     from the PNG export plus arithmetic: card height = image + gap + caption lines;
+     strip width = sum of cards + gap×(n−1) — the same check proves the gap itself. Log the viewed frames in the source table (section 0);
      mockup demo data that contradicts its own validation (Cyrillic in a "Latin only"
      field) goes to the analyst questions
    - **When RUNNING test cases against the implementation the same rule applies as for

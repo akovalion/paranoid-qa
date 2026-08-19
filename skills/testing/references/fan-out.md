@@ -40,6 +40,7 @@ A list of findings, each: `{ axis, screen/element, expected (+source), actual (+
 ### 7.7 Discipline
 - Never parallelize the browser through a single MCP instance — in this mode subagents only analyze the collected artifacts.
 - Evidence discipline is not lost in delegation: proof travels with every finding.
+- NUMBERS in a subagent report (sizes, spacing, gap, fill ratios) are a hypothesis until you re-measure them yourself against the primary source: the agent retells a dump, and in a dump the size of a nested raster is easily mistaken for the size of the block. Measure it yourself before a number goes into a report or a defect.
 - Dedup is mandatory at synthesis, otherwise one defect arrives from 2-3 axes.
 - Token cost is deliberate: the number of axes fits the task, not "always 5".
 
