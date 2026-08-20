@@ -284,6 +284,8 @@ Distinguish two types of questions about ambiguities:
      per subagent, about 4 subagents at once.
    — **Bulk status changes** (Draft → Approved after review) and **filling in run
      results**: split the list of keys between subagents.
+   — **Bulk text edits of test cases that already exist** (typos, reworded expected
+     results after the analyst answers): split the list of keys between 3-4 subagents.
 
    **Do not delegate — here an error costs more than the speed gains:**
    — the wording of names, steps and expected results: one voice and precision
@@ -304,7 +306,28 @@ Distinguish two types of questions about ambiguities:
      (duplicate risk) — report the key back instead";
    — return the list of created keys in test case order.
 
+   **Editor subagent prompt (editing test cases that already exist) — the mandatory minimum:**
+   — the exact list of keys for that subagent and a ban on opening any other key: a key
+     range routinely contains test cases owned by other teams;
+   — **"sort the steps returned by the fetch call by their `index` before sending them
+     back"** — the API returns them in arbitrary order, and without sorting the scenario
+     comes out shuffled;
+   — **"the update call replaces the whole test script"** — carry over EVERY step
+     verbatim, changing only the agreed substrings;
+   — pass name / objective / precondition only if the edit actually touched them; do not
+     pass priority, status, folder, issue links or custom fields — the fields you omit
+     stay as they were;
+   — "insert an HTML link as a real `<a href="...">...</a>` tag, do NOT escape it";
+   — "no match inside the test case — do not call update at all";
+   — "on an error or an unclear result do NOT retry the call";
+   — return one line per key: changed (which fields and steps) | unchanged | ERROR.
+
    **Verification after the upload is mandatory and is done by you, not by the subagent:**
    search test cases by folder (count, priorities, type) plus fetch 1-2 test cases in
    full (link rendered as a tag, steps in place, issue links set). A subagent's
    "everything created" report is not evidence.
+
+   **After a bulk edit the verification is yours as well, and it covers every case:**
+   fetch EVERY edited test case — the new wording is in place, the old one is gone, step
+   indexes run 0..N in scenario order, links are still tags, issue links and type are
+   not reset.
