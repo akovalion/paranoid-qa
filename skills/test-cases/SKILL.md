@@ -165,6 +165,11 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      mockup frame; run hover/focus/active separately - they do not exist in the DOM.
      A screenshot that failed to save blocks the step. Reporting "verified" without
      having looked at a single screenshot of the implementation is not acceptable
+   — **Tie numbers from a developer's spec to a breakpoint.** Spacing tokens often
+     differ between desktop and mobile even when the structure is identical: before
+     stamping a number into an expected result, clarify which layout it was named for
+     and check it against THAT breakpoint's mockup. One number copied into every test
+     case is a ready-made false Fail.
    — By default write expected results 1:1 with the mockup (exact headings, texts,
      full list/group contents, names, icons) — max precision is the default. Relax the
      content match ONLY when the user explicitly says not to tie to content (e.g. the
