@@ -30,6 +30,11 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      (as text or screenshots) — they often carry corrections on top of the mockup
      (error texts, removed fields, final wording). Until you have them, that source
      stays open, and the report says so.
+   — When the scope is defined by a spec document — tie every test case to a specific
+     spec item (a "spec item" column in the coverage table). A check born only from
+     the mockup or a heuristic does not become a test case — it goes to "Questions
+     for the analyst" / "observations outside the spec". The mockup is a source of
+     exact values for spec items, not a generator of new checks.
 
 1. Test case format:
    — Name — short and clear (object: essence of the check, e.g. "Calendar

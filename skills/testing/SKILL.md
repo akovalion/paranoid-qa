@@ -32,6 +32,7 @@ Master checklist "how to test anything" — frontend/UI and backend/services. Do
 
 **Requirements analysis and questions for the analyst**
 - Every AC → a check; every check → a link to an AC or an explicit "extra heuristic" note.
+- When the scope is a specific spec: Pass/Fail verdicts only against its items; findings outside the spec go into a separate "out of scope" block (observation/question) — not a Fail and not a defect of the task.
 - Surface ambiguities ("should work correctly", no concrete values, unspecified boundaries, undefined error behavior).
 - Mismatches ticket ↔ Figma ↔ production ↔ docs — do NOT close with an assumption, write them up as questions.
 - Record undefined behavior: empty states, network/server errors, timeouts, integration failure, concurrent actions, expired session.
