@@ -94,6 +94,7 @@ Account for the requirements logic and existing mockups. On mismatch between moc
 
 4. Coverage:
    **Negatives are a required artifact, not optional.** Add a dedicated "Negative/Boundary" group; in the coverage assessment (section 12) list which negative classes are covered and which are consciously skipped (with a reason). A positive-only set is incomplete, even if the object looks simple/navigational.
+   **A heuristic is not a requirement.** A check from the negative/overlay pack with no backing in the spec/mockup (popup closing, cursor, anti-spam and the like) is marked "heuristic" as its source, and its expected result is phrased as an observable expectation. A Fail of such a check is a question to the analyst, not a defect of the task; it becomes a defect only after the requirement is confirmed. This refines the "scope = spec" rule from section 0, it does not cancel the negative pack.
    **Overlays/modals/panels (an example pack for one object type):** scroll lock (position preserved, background not scrollable, scrollbar-width compensation with no "jump"), close via ×/Esc/backdrop click/Back, deep-link and reload (state in URL), double-click/spam, resize while open, overlay stacking, **navigation while the overlay is open** (switching a tab, following an internal link, Back/Forward: the overlay closes or stays controllable, does not linger above the new screen, does not intercept clicks, and there is still something to close it with - the trigger did not vanish with the context switch), **fits the viewport at EVERY breakpoint (incl. tablet and short/landscape screens): content not clipped vertically OR horizontally (nothing runs off the edges), internal scroll when content is taller than the viewport, every element and button (submit/footer/close) reachable, safe padding from edges**. Other object types have their own negative pack (forms, lists, navigation, APIs; see references).
    **Repeating blocks and dynamic collections (add/remove N participants, items, addresses, files) — dedicated test cases, not a line inside the submit case.** A classic design gap: people write "Add an element", "Remove an element", "Limit" and "Submit with elements added" — coverage looks complete while the essential thing goes unchecked: WHAT IS ACTUALLY SENT IN THE REQUEST for each count. Plan at least three cases:
    • **Request composition for every count** — 0, 1, 2, … maximum; the expected result states the number of array elements AND the full composition, not "the application was submitted". Intermediate counts are mandatory: array-assembly bugs surface at 2-3 elements, not at the boundaries.
@@ -272,8 +273,12 @@ Distinguish two types of questions about ambiguities:
    — The md file with the test cases remains a mandatory validation stage BEFORE
      creation in the TMS; CSV (section 10) is the fallback if MCP is unavailable.
    — Runs for the task (on user request): create a test run → set statuses
-     as the run progresses (Pass/Fail/Blocked). Accompany a Fail status with a comment
-     stating the cause/a link to the defect.
+     as the run progresses (Pass/Fail/Blocked). Set statuses silently: run
+     results are the team's shared space and comments post under the user's
+     name, so write text there only when the user explicitly asks. Report Fail
+     causes and defect links in the chat/report instead. After a series of
+     status updates, verify the totals against the run's execution summary
+     from the TMS instead of counting by hand.
    — **Entry point — the first step of a test case opens the page under test**
      ("Open the page at URL …"), so it is clear where to verify. For test cases
      with a special precondition (success screen, pre-filled form), put the URL
