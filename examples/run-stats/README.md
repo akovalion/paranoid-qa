@@ -45,3 +45,11 @@ few MCP calls), sandboxes to `SKIP_DIRS`, and tune the MCP families in
 
 Privacy: the script only reads local files and prints to stdout. Nothing
 leaves your machine.
+
+## What came out of it
+
+This script produced the dataset behind
+[an 11-week measurement write-up](https://habr.com/ru/articles/1085288/)
+(Russian): 277 agent hours against 213 human ones, 94 confirmed findings split
+77 to 16, six misses by the agent, and the cost of an agent-hour. The method
+notes above are the ones that survived that run.

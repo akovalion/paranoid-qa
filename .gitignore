@@ -2,3 +2,7 @@
 .playwright-mcp/
 *.png
 !assets/*.png
+
+# приватные заготовки живут только в ~
+paranoid-qa-launch-kit.md
+paranoid-qa-landing-prompt.md

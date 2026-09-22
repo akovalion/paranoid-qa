@@ -98,6 +98,15 @@ Skills convince the agent to stay disciplined; [`examples/hooks`](examples/hooks
 
 [`examples/run-stats`](examples/run-stats) parses your local Claude Code transcripts and reports, per work session: active agent hours vs human presence hours, plus defect-candidate lines to review. Local only - nothing leaves your machine.
 
+## Write-ups (Russian)
+
+The pack grew out of day-to-day QA work, and every step is documented on Habr:
+
+- [Evidence instead of hallucinations](https://habr.com/ru/articles/1058134/) - why agents report checks they never ran, and the discipline that stops it
+- [Reviewing the agent's own Playwright tests](https://habr.com/ru/articles/1058692/) - what to catch before such a test reaches the repo
+- [Hooks as enforcement](https://habr.com/ru/articles/1062206/) - gates that deny a commit without a fresh green run
+- [Agent vs human: 11 weeks of measurements](https://habr.com/ru/articles/1085288/) - 277 agent hours against 213 of mine, 94 confirmed findings, the cost of an agent-hour and where it did not pay off
+
 ## Roadmap
 
 - [x] Claude Code plugin format (one-command install)
