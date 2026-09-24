@@ -13,7 +13,7 @@ Split the meticulous run across **control axes** instead of a single linear pass
 ### 7.3 Steps
 1. **Collection (orchestrator, sequential).** Walk the screens/states, store artifacts in the run's working folder (`/tmp/<run>/`): screenshots `screen-N.png`, DOM and computed-style dump `dom-N.json`, network log/HAR `network.json`, extracted texts `texts.md`; for cross-browser — paired Chromium/WebKit artifacts. Capture transient and interactive states (hover/focus/disabled/loading) empirically, as the doctrine requires.
 2. **Fan-out (`Agent`, parallel).** Launch the subagents in a single message (several `Agent` calls at once = parallel start), one per axis. Give each a brief (§7.5).
-3. **Synthesis (orchestrator, no agent).** Collect the findings, dedup (visual and contrast often report the same gray), set/normalize severity, map to AC, filter out duplicates and non-defects.
+3. **Synthesis (orchestrator, no agent).** Collect the findings, dedup (one defect often arrives from two axes), set/normalize severity, map to AC, filter out duplicates and non-defects.
 4. **Output.** Summary defect list with proofs → bug reports (the `bug-report` skill from this pack if installed, otherwise the structure from `artifacts.md`); uncovered areas and `Blocked` — explicitly, with reasons.
 
 ### 7.4 Axes (default — customize per task)
