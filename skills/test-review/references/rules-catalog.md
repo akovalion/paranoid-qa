@@ -103,7 +103,7 @@ A common trap on landing pages and forms of SSR frameworks; see also A5.
 ## B. Locators
 
 ### B1. Locator priority — 🟠 for CSS/XPath without justification
-Official order: `getByRole({ name })` → `getByText` → `getByLabel` → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (last resort) → XPath (almost never).
+Order: `getByRole({ name })` → `getByLabel` (form fields) / `getByText` (static content) → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (last resort) → XPath (almost never).
 ```ts
 // ❌
 page.locator('button.buttonIcon.episode-actions-later');

@@ -73,7 +73,7 @@ Each item — what to look for; the violation's severity in parentheses. Expande
 - [ ] SSR hydration accounted for: SSR frameworks (Nuxt/Next etc.) can remount content after hydration → an instant `count()`/`allTextContents()` right after appearance hits the emptiness window. Measure via `toPass`. (🟠)
 
 ### B. Locators
-- [ ] Priority: `getByRole({ name })` → `getByText` → `getByLabel` → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (last resort) → XPath (almost never). (🟠 for CSS/XPath without a reason)
+- [ ] Priority: `getByRole({ name })` → `getByLabel` (form fields) / `getByText` (static content) → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (last resort) → XPath (almost never). (🟠 for CSS/XPath without a reason)
 - [ ] No brittle CSS chains tied to DOM structure (`div > div > span`, `.episode-actions-later`). They break on rebranding. (🟠)
 - [ ] Strict mode: the locator resolves to a single element; narrow via `{ name }` / `.filter({ hasText })` / `.filter({ has })`, not `.nth()`. `.nth()` — only with justification. (🟡)
 - [ ] Floating elements (dropdowns, toasts, modals, portal content, iframes) are located **globally from `page`**, not from a section. (🟠)

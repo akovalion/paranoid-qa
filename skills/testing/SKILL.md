@@ -109,7 +109,7 @@ Master checklist "how to test anything" — frontend/UI and backend/services. Do
 **Recording / DoD**
 - Every test case with a status + evidence: Pass (artifact), Fail (bug + artifact), Blocked (reason), Not tested (why). Blocked ≠ Fail.
 - Record results in the TMS strictly per the team's convention (comments, environment, attachments) — don't invent your own; evidence is kept in the run artifacts and the summary report regardless.
-- Defects filed via `bug-report`, severity/priority set, steps and artifacts attached; linked to the ticket only if the user asked.
+- Defects filed via `/bug-report`, severity/priority set, steps and artifacts attached; linked to the ticket only if the user asked.
 - Coverage reconciled with AC: every AC covered by ≥1 check; uncovered ones — explicit with a reason.
 - Run recorded: environment, build/commit, browsers/viewports, date, executor.
 - Regression of affected areas done (or deliberately deferred with the risk recorded); blockers escalated; questions linked.

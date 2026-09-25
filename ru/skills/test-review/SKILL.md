@@ -73,7 +73,7 @@ allowed-tools:
 - [ ] Учтена SSR-гидратация: SSR-фреймворки (Nuxt/Next и др.) могут перемонтировать контент после гидратации → мгновенный `count()`/`allTextContents()` сразу после появления ловит окно пустоты. Замер через `toPass`. (🟠)
 
 ### B. Локаторы
-- [ ] Приоритет: `getByRole({ name })` → `getByText` → `getByLabel` → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (крайний случай) → XPath (почти никогда). (🟠 при CSS/XPath без причины)
+- [ ] Приоритет: `getByRole({ name })` → `getByLabel` (поля формы) / `getByText` (статичный контент) → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (крайний случай) → XPath (почти никогда). (🟠 при CSS/XPath без причины)
 - [ ] Нет хрупких CSS-цепочек по структуре DOM (`div > div > span`, `.episode-actions-later`). Ломаются при ребрендинге. (🟠)
 - [ ] Strict mode: локатор резолвится в один элемент; уточнение через `{ name }` / `.filter({ hasText })` / `.filter({ has })`, а не `.nth()`. `.nth()` — только с обоснованием. (🟡)
 - [ ] Плавающие элементы (дропдауны, тосты, модалки, портальный контент, iframe) ищутся **глобально от `page`**, не от секции. (🟠)

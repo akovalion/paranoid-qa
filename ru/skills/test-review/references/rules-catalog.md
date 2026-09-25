@@ -103,7 +103,7 @@ await expect(async () => {
 ## B. Локаторы
 
 ### B1. Приоритет локаторов — 🟠 при CSS/XPath без причины
-Официальный порядок: `getByRole({ name })` → `getByText` → `getByLabel` → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (крайний случай) → XPath (почти никогда).
+Порядок: `getByRole({ name })` → `getByLabel` (поля формы) / `getByText` (статичный контент) → `getByPlaceholder` → `getByAltText` → `getByTitle` → `getByTestId` → CSS (крайний случай) → XPath (почти никогда).
 ```ts
 // ❌
 page.locator('button.buttonIcon.episode-actions-later');
