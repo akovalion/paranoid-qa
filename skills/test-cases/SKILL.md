@@ -119,9 +119,9 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      • network loss (if there are integrations), etc.
    — Optimize the set thoughtfully, but never at the cost of quality and coverage
    — Run checks at these resolutions (if the task involves UI/responsive layout):
-     Desktop: 1920x1080, 1536x864, 2560x1440
+     Desktop: 1920x1080, 1536x864, 1600x900, 2560x1440
      Mobile: 414x896, 360x800, 393x873, 430x926
-     Tablet: 768x1024, 1024x768
+     Tablet: 768x1024, 1024x768 - only if the task's design has tablet frames or the project explicitly supports tablets
    — **Layout integrity at EVERY breakpoint — for ANY object, not just modals:** nothing clipped vertically or horizontally or running off the edges; every element, text, icon and button visible and reachable; scroll when content exceeds the viewport (internal scroll for overlays); composition and placement verified against the mockup for THAT specific breakpoint (no item should disappear, move, or flip its icon side). Modals/overlays are just one instance.
    — **Verify alignment geometrically, not by eye:** for "centered" — the element's center matches the container/viewport center (tolerance ~1-2px); for left/right — the edge offsets; for symmetry — equal paired margins. Presence ≠ correct position. At extreme widths (2560+ and the project's minimum supported mobile width, usually 360) check both overflow AND centering/alignment — that's where the layout math most often breaks (fixed left, max-width container, grid, absolute).
    — Form reuse:
