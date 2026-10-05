@@ -1,13 +1,12 @@
 ---
 name: test-review
-description: Review of just-written or modified autotests against TypeScript + Playwright best practices (per official documentation) and your project's conventions. Use via /test-review or after writing/editing any test (UI E2E, API, UI+API, mocks, visual, mobile) or a Page Object/fixture/constants — before commit. Produces a prioritized list of findings with severity, line references, and ready-made fixes.
+description: Review of just-written or modified autotests against TypeScript + Playwright best practices (per official documentation) and your project's conventions. Use via /test-review or after writing/editing any test (UI E2E, API, UI+API, mocks, visual, mobile) or a Page Object/fixture/constants — before commit. Runs in an isolated subagent with no session history. Produces a prioritized list of findings with severity, line references, and ready-made fixes.
+context: fork
 allowed-tools:
   - Read
   - Grep
   - Glob
   - Bash
-  - Edit
-  - AskUserQuestion
 ---
 
 # Autotest review (TypeScript + Playwright)
@@ -18,18 +17,25 @@ Check just-written or modified test code against best practices and produce a pr
 
 ---
 
+You are an independent reviewer. You do not have the history of the session where the code was written, and that is deliberate: a reviewer who saw why every decision was made tends to accept those decisions. Assess the code as it is, without the author's explanations.
+
+Scope from the caller: $ARGUMENTS
+
 ## When to apply and operating mode
 
-- **Default mode — diagnostics.** Read the code, run static analysis, produce a report. Do **not** edit files until the user explicitly asks to "apply / fix". Then — **iteratively**, one change at a time with a run in between (no big-bang rewrite of a working test).
-- **Scope — only new/changed code, not the whole suite.** Default — uncommitted changes (`git status` + `git diff`). If the user specified a file/directory — review those.
+- **Diagnostics only.** Read the code, run static analysis, produce a report. Do not edit files: the report goes back to the calling session, and the fixes are applied there.
+- **Read the project's root `CLAUDE.md` first** (if present): in an isolated context it may not be loaded.
+- **Scope — only new/changed code, not the whole suite.** The paths from the arguments; without them - uncommitted changes (`git status` + `git diff`).
 - **Any test type:** UI E2E, API, UI+API, visual regression, mobile, mocks, plus Page Objects, fixtures, constants.
-- Do not drift into autonomous actions beyond the review (browser reproduction, running the whole suite, edits) without confirmation — the default task is "read and assess".
+- Run tests only if the arguments ask for it. Never the whole suite, never a browser.
 
 ## Evidence discipline (no hallucinations)
 
 - Every finding — from an **actually read line** (`file:line`) or from **observed output** of typecheck / lint / a run. Do not invent violations "by analogy" and do not reference lines you have not seen.
 - A rule is checkable by a tool (tsc, ESLint, a run) → **run the tool first, then report its output**, not "probably present".
 - Not sure it is a defect rather than a deliberate project decision → mark it **"questionable"**, do not assert. Cross-check against the project's `CLAUDE.md` and neighboring code: some "anti-patterns" may be intentional (legacy helpers, non-standard markup, deliberate rule exceptions). File names/endpoints/selectors from memory and past context are background — re-verify against live code.
+- A decision that looks like a violation without the author's explanation - do not guess and do not justify it. Put it under "Questionable" with a concrete question to the author.
+- Report only the runs you did yourself.
 - Found no violations in a category — say so: "clean", do not invent a finding for volume.
 
 ## Process
@@ -39,10 +45,15 @@ Check just-written or modified test code against best practices and produce a pr
 3. **Static analysis (mandatory — cheap and evidence-based):**
    - Typecheck: `tsc --noEmit` (or the project's typecheck script from `package.json`). Any type error in new code = 🔴 Blocker.
    - ESLint: find the project config and **read which rules are actually enabled** (especially from `eslint-plugin-playwright`) — do not assume from memory. Lint output is the source of truth.
-   - **What lint actually catches — a two-level check.** (1) No eslint-plugin-playwright at all → floating promises, manual asserts and `networkidle` are invisible; suggest enabling recommended. (2) Recommended is on → `missing-playwright-await`, `prefer-web-first-assertions`, `no-networkidle` are already errors and get caught, but `no-wait-for-timeout`, `no-force-option` and `expect-expect` are only **warn** there (verified against v2.10.5) — without `--max-warnings 0` these warnings never fail CI. Suggest raising them to error. `@typescript-eslint/no-floating-promises` needs type-aware linting — rarely enabled. Whatever lint still misses — verify manually (A/C/H).
+   - **What lint actually catches — a two-level check.** (1) No eslint-plugin-playwright at all → floating promises, manual asserts and `networkidle` are invisible; suggest enabling recommended. (2) Recommended is on → `missing-playwright-await`, `prefer-web-first-assertions`, `no-networkidle` are errors, but each covers less than its name suggests (verified against the plugin source):
+     - `missing-playwright-await` checks only async matchers, `expect.poll`, `test.step` and `waitFor*`. An action without `await` (`page.click()`, `page.goto()`, `locator.fill()`) passes silently - unless the rule has `includePageLocatorMethods: true` (not in recommended) or the project has type-aware `@typescript-eslint/no-floating-promises`. Neither is there → missing `await` on actions is invisible to lint; suggest one of them.
+     - `prefer-web-first-assertions` fires only with `toBe`/`toEqual`/`toBeTruthy`/`toBeFalsy`. `expect(await loc.getAttribute('href')).toContain(…)` or `toMatch(…)` pass.
+     - `expect(await loc.count()).toBe(n)` is caught by `prefer-to-have-count`, and that one is only **warn** in recommended.
+     - `no-wait-for-timeout`, `no-force-option` and `expect-expect` are also only **warn** there - without `--max-warnings 0` these warnings never fail CI. Suggest raising them to error.
+     Whatever lint still misses - verify manually (A/C/H).
    - If needed — a formatting check (Prettier), if configured in the project.
 4. **Checklist.** Go through categories A–J below + K (your project's rules). For each violation — severity + `file:line` + fix. Deeper per rule — [`references/rules-catalog.md`](references/rules-catalog.md).
-5. **Stability verification** (only if the user asks to confirm the test works and a sandbox is available): run **only this test** in the project's native parallelism (NOT `--workers=1`):
+5. **Stability verification** (only if the arguments ask to confirm the test is stable): run **only this test** in the project's native parallelism (NOT `--workers=1`):
    ```bash
    npx playwright test <file> --grep "<id>" --project="<projectName>" --retries=0 --repeat-each=5
    ```
@@ -96,7 +107,7 @@ Each item — what to look for; the violation's severity in parentheses. Expande
 - [ ] Typecheck green for new code (`tsc --noEmit`, strict). (🔴)
 - [ ] `any` in **POM / fixtures / utils** — undesirable, type it (`Locator`/`Page`/`Route`/`APIResponse`). Cross-check the project config: `any` may be deliberately allowed in specs (e.g. for mock data) — do not flag it there. `@ts-ignore` — only with a reason/ticket. (🟠 for POM/utils)
 - [ ] POM fields — `readonly Locator`; fixtures typed (`base.extend<{...}>`); type the API response body explicitly if asserts rely on it. (🟡)
-- [ ] **A missing `await` is often NOT caught by lint** (check the config: is `no-floating-promises` / `missing-playwright-await` there; `valid-expect` covers only part) → re-read by eye, see A2. (🔴)
+- [ ] **A missing `await` on an action is usually NOT caught by lint**: `missing-playwright-await` covers it only with `includePageLocatorMethods: true`, otherwise type-aware `no-floating-promises` is needed; a promise under `void` passes even that one → re-read by eye, see A2. (🔴)
 - [ ] Match the module system (ESM vs CJS) and import style (relative vs aliases) against the project's actual code — follow the existing style, do not impose your own. Remove unused imports/variables/constants/POM methods. (🟡)
 
 ### F. Network and mocks
@@ -168,6 +179,9 @@ Each item — what to look for; the violation's severity in parentheses. Expande
 ### ⚪ Nit (N)
 …
 
+### ❓ Questionable
+- `path/to/spec.ts:42` - <a decision that looks like a violation without context> - question to the author: <…>
+
 ### ✅ What is good
 - <what matches best practice — brief>
 
@@ -180,4 +194,4 @@ Rules:
 - Every Blocker/Major — with a concrete fix (a `❌ before → ✅ after` snippet).
 - A category is clean — write "clean", do not invent.
 - At the end — a one-line verdict and the run command with the correct `--project`.
-- If asked to apply fixes — do it **iteratively** (one change → typecheck/run → the next), do not rewrite a working test wholesale.
+- The verdict ends with a line for whoever applies the fixes: one change → typecheck/run → the next, no wholesale rewrite of a working test.

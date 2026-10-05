@@ -34,7 +34,7 @@ test.step('Submit', async () => { ... });       // step won't run synchronously
 await expect(page.getByText('Done')).toBeVisible();
 await test.step('Submit', async () => { ... });
 ```
-**Important:** without eslint-plugin-playwright, lint will not see a floating promise (`valid-expect` covers only some `expect` forms). With recommended enabled, `missing-playwright-await` is already an error and gets caught; but `no-wait-for-timeout`, `no-force-option` and `expect-expect` are only warn there (verified against v2.10.5) — without `--max-warnings 0` they never fail CI, suggest raising them to error. `@typescript-eslint/no-floating-promises` needs type-aware linting. If the rules are missing — **re-read by eye**.
+**Important:** without eslint-plugin-playwright, lint will not see a floating promise (`valid-expect` covers only some `expect` forms). With recommended enabled, `missing-playwright-await` is an error, but it checks only async matchers, `expect.poll`, `test.step` and `waitFor*` - both examples above are caught, `page.click()` / `page.goto()` / `locator.fill()` without `await` are not. Actions are covered by `includePageLocatorMethods: true` on that rule (not in recommended) or by type-aware `@typescript-eslint/no-floating-promises`; a promise under `void` passes even that one. `no-wait-for-timeout`, `no-force-option` and `expect-expect` are only warn in recommended (verified against v2.10.5) - without `--max-warnings 0` they never fail CI, suggest raising them to error. If the rules are missing - **re-read by eye**.
 Source: PW [best-practices#lint-your-tests](https://playwright.dev/docs/best-practices).
 
 ### A3. Race when waiting for network — 🔴
@@ -163,7 +163,7 @@ expect(await loc.count()).toBe(3);                               // 🟠
 await expect(page.getByText('Welcome')).toBeVisible();
 await expect(loc).toHaveCount(3);
 ```
-Web-first (auto-retry until timeout): `toBeVisible/toHaveText/toContainText/toHaveCount/toHaveValue/toBeChecked/toBeEnabled/toBeDisabled/toHaveAttribute/toHaveClass/toHaveURL`. Check the config: if `prefer-web-first-assertions` is not enabled — lint won't catch manual assertions, check by eye.
+Web-first (auto-retry until timeout): `toBeVisible/toHaveText/toContainText/toHaveCount/toHaveValue/toBeChecked/toBeEnabled/toBeDisabled/toHaveAttribute/toHaveClass/toHaveURL`. Check the config: if `prefer-web-first-assertions` is not enabled - lint won't catch manual assertions, check by eye. Even when it is, it fires only with `toBe`/`toEqual`/`toBeTruthy`/`toBeFalsy`: `expect(await loc.getAttribute('href')).toContain(…)` / `toMatch(…)` pass. `count()` is a separate rule, `prefer-to-have-count` - only warn in recommended.
 Source: PW [test-assertions](https://playwright.dev/docs/test-assertions), PW [best-practices](https://playwright.dev/docs/best-practices).
 
 ### C2. Test without assertions — 🔴

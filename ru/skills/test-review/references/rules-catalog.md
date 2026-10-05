@@ -34,7 +34,7 @@ test.step('Отправить', async () => { ... });       // шаг не вы�
 await expect(page.getByText('Готово')).toBeVisible();
 await test.step('Отправить', async () => { ... });
 ```
-**Важно:** без eslint-plugin-playwright линт floating promise не увидит (`valid-expect` ловит лишь часть форм). С подключённым recommended `missing-playwright-await` — уже error и ловится; зато `no-wait-for-timeout`, `no-force-option` и `expect-expect` там только warn (сверено по v2.10.5) — без `--max-warnings 0` они не валят CI, предложи поднять до error. `@typescript-eslint/no-floating-promises` требует type-aware линтинга. Нет нужных правил — **перечитывай глазами**.
+**Важно:** без eslint-plugin-playwright линт floating promise не увидит (`valid-expect` ловит лишь часть форм). С подключённым recommended `missing-playwright-await` стоит error, но проверяет только асинхронные матчеры, `expect.poll`, `test.step` и `waitFor*` - оба примера выше ловятся, а `page.click()` / `page.goto()` / `locator.fill()` без `await` нет. Действия покрывает `includePageLocatorMethods: true` у этого правила (в recommended его нет) или type-aware `@typescript-eslint/no-floating-promises`; промис под `void` проходит даже его. `no-wait-for-timeout`, `no-force-option` и `expect-expect` в recommended только warn (сверено по v2.10.5) - без `--max-warnings 0` они не валят CI, предложи поднять до error. Нет нужных правил - **перечитывай глазами**.
 Источник: PW [best-practices#lint-your-tests](https://playwright.dev/docs/best-practices).
 
 ### A3. Гонка в ожидании сети — 🔴
@@ -163,7 +163,7 @@ expect(await loc.count()).toBe(3);                                         // �
 await expect(page.getByText('Добро пожаловать')).toBeVisible();
 await expect(loc).toHaveCount(3);
 ```
-Web-first (авто-ретрай до timeout): `toBeVisible/toHaveText/toContainText/toHaveCount/toHaveValue/toBeChecked/toBeEnabled/toBeDisabled/toHaveAttribute/toHaveClass/toHaveURL`. Проверь конфиг: если `prefer-web-first-assertions` не включено — линт ручные ассерты не ловит, проверяй глазами.
+Web-first (авто-ретрай до timeout): `toBeVisible/toHaveText/toContainText/toHaveCount/toHaveValue/toBeChecked/toBeEnabled/toBeDisabled/toHaveAttribute/toHaveClass/toHaveURL`. Проверь конфиг: если `prefer-web-first-assertions` не включено - линт ручные ассерты не ловит, проверяй глазами. Даже включённое, оно срабатывает только с `toBe`/`toEqual`/`toBeTruthy`/`toBeFalsy`: `expect(await loc.getAttribute('href')).toContain(…)` / `toMatch(…)` проходят. `count()` - отдельное правило `prefer-to-have-count`, в recommended только warn.
 Источник: PW [test-assertions](https://playwright.dev/docs/test-assertions), PW [best-practices](https://playwright.dev/docs/best-practices).
 
 ### C2. Тест без ассертов — 🔴
