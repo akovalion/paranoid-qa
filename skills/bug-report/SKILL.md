@@ -76,6 +76,7 @@ If there is useful context - add an **Additional info:** block at the end.
 
 - Do not use markdown headings (##), only **bold** - Jira does not render the description as markdown; check the rendering on your instance
 - Do not use tables in the description
+- Do not use backticks (inline code) in the description or comments: write API paths, endpoints, methods and field values as plain text. Depending on the tracker they render as monospace "code" chunks in the middle of a sentence or as literal backticks. Before the preview and before create/update, scan the text for backticks
 - Language - whatever is standard in your issue tracker
 - Write browser names the user-facing way: Chrome (not Chromium), Safari (not WebKit). This also applies to the test engine (run in Chromium → write "Chrome", in WebKit → "Safari")
 - Do not link the created bug to other tickets automatically - only on explicit user request
