@@ -40,7 +40,7 @@
 
 Нужен [Claude Code](https://claude.com/claude-code).
 
-**Плагином — одна команда, версионируемые обновления (рекомендуется):**
+**Плагином - одна команда, обновления с каждым коммитом (рекомендуется):**
 
 ```
 /plugin marketplace add akovalion/paranoid-qa

@@ -40,7 +40,7 @@
 
 Requires [Claude Code](https://claude.com/claude-code).
 
-**As a plugin — one command, versioned updates (recommended):**
+**As a plugin - one command, updates with every commit (recommended):**
 
 ```
 /plugin marketplace add akovalion/paranoid-qa
