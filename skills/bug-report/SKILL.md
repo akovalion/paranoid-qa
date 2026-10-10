@@ -39,12 +39,18 @@ Required data:
 
 Optional:
 - Project (default - from the configuration)
-- Priority (default medium)
+- Priority (if not given, derived from impact, see section 2)
 - Assignee
 
 ## 2. Ticket format
 
 Type and priority - per the configuration (section 0).
+
+**Priority comes from impact.** The agent tends to inflate a finding: the defect is real, so it must be "critical". So before the preview, answer with facts from the run:
+- who is affected right now: every user of the page / one viewport or browser / one state or scenario; production or only the test environment (if the feature is not yet released or is switched off in production, it is the test environment);
+- what the user loses: cannot complete an action (submit a request, pay, sign in) / completes it with a workaround / sees a visual mismatch that does not affect the action.
+
+Priority from the answers (levels from section 0): a key action fails in production or in a task headed for release - High; the action works with a workaround or a narrow slice is affected - Medium; a visual mismatch - Low. If you could not establish the impact (no production access, unclear who is affected), say so, state what is needed to establish it, and mark the priority "for the user to decide". If the user set the priority themselves, use it, but still show the impact.
 
 Summary: a brief description of the problem, no [BUG] prefixes or similar.
 
@@ -88,6 +94,7 @@ ALWAYS show the user the full ticket text and wait for confirmation before calli
 ```
 **Type:** Bug
 **Priority:** Medium
+**Impact:** <who is affected right now>; <what the user loses> → <why this priority>   (preview only, not sent to Jira)
 **Assignee:** (if specified)
 **Project:** PROJ
 
