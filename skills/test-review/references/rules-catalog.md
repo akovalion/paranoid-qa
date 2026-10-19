@@ -412,6 +412,19 @@ A post-fix regression test fails on the root symptom and checks structurally (pr
 ### J3. Oracle adapted to environment constraints — 🟠
 Where the UI doesn't distinguish 404/5xx (one stub page for both) — assert at the network level, not "saw the error text". Where an environment with anti-bot protection kills browser XHRs (random 4xx on direct requests) — use `page.request` for API checks, not a form submit through the UI.
 
+### J4. Tautological assert - 🟠
+The locator is selected by the very property that is asserted afterwards. Such an assert fails only when the element is missing altogether and never checks the claimed property. Lint does not catch it.
+```ts
+// ❌ - the element is found by its text, and the same text is asserted
+await expect(page.getByText('Request sent')).toHaveText('Request sent');
+// ❌ - found by a class, and the same class is asserted
+await expect(page.locator('.tab.is-active')).toHaveClass(/is-active/);
+
+// ✅ - the element is located by an independent attribute, the property under test is asserted separately
+await expect(page.getByRole('status')).toHaveText('Request sent');
+await expect(page.getByRole('tab', { name: 'Delivery' })).toHaveClass(/is-active/);
+```
+
 ---
 
 ## K. Your project's rules — sample fill-in
@@ -441,3 +454,19 @@ A test must not add permanent skipped entries to regular runs. Environment-speci
 
 ### K5. Dependencies and config — 🔴 if touched without being asked
 Don't bump the `@playwright/test` version or add dependencies without checking against CI (Docker image, lock file); don't touch `playwright.config.ts` unless necessary; don't commit `.env`/secrets.
+
+### K6. Browsers by oracle - 🟡 / 🟠
+A test runs in the engines its oracle depends on. Server data, hrefs and HTTP statuses, payload, JS logic, one more data variant of an already covered mechanism do not depend on the engine - one engine is enough for them. Layout, scrolling and scroll-lock, overlays, masks, date pickers and dates, label clicks, swipes, iframes, bfcache do - they must run in WebKit. The mechanism in the example: a `@chromium-only` tag that the WebKit project excludes via `grepInvert`.
+```ts
+// ❌ 🟡 a link's HTTP status does not depend on the engine, the WebKit run is wasted
+test('internal page links return 2xx/3xx', async ({ page }) => { ... });
+// ✅
+test('internal page links return 2xx/3xx @chromium-only', async ({ page }) => { ... });
+
+// ❌ 🟠 scroll-lock depends on the engine: this is exactly the check that must run in WebKit
+test('modal locks background scroll and keeps the position @chromium-only', async ({ page }) => { ... });
+
+// ❌ 🟠 a runtime engine skip without a ticket instead of a deliberate decision
+test.skip(({ browserName }) => browserName === 'webkit');
+```
+Mobile layout and touch checks go into a separate `*-mobile.spec.ts`: desktop projects exclude it via `testIgnore`, mobile ones include it via `testMatch`. Sharing a desktop spec with mobile projects is justified only when the check depends on the width.
