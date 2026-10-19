@@ -36,6 +36,7 @@ Required data:
 - What was expected (expected result)
 - Steps to reproduce
 - Environment (environment name, browser, device)
+- Location: URL, block or element (by a visible attribute), where it reproduces and where it does not (other pages of the same type, browsers, viewports). A generalization like "everywhere" only after checking every place, otherwise "checked on A and B". In the description the location goes into the steps (URL) and the actual result (the block, where it happens and where not)
 
 Optional:
 - Project (default - from the configuration)
@@ -75,8 +76,8 @@ Description of what should happen.
 Environment/browser/device.
 ```
 
-If preconditions are needed - add a **Preconditions:** block before the steps.
-If there is useful context - add an **Additional info:** block at the end.
+Add a **Preconditions:** block (before the steps) ONLY when the bug cannot be reproduced without it: a specific role or account, a data state (a filled cart, a placed order), an enabled feature flag, a completed previous step of the flow. Formal phrases like "the block is deployed to the test environment", "the page is available", "the browser is open" are noise, don't write them: if the precondition follows from the first step or from the very fact of testing, there should be no block.
+An **Additional info:** block (at the end) - only on the user's explicit request. Run-internal context (test cycle number, test case keys, finding numbers from the report) does not go into the ticket.
 
 ## 3. Text rules
 
@@ -85,6 +86,7 @@ If there is useful context - add an **Additional info:** block at the end.
 - Do not use backticks (inline code) in the description or comments: write API paths, endpoints, methods and field values as plain text. Depending on the tracker they render as monospace "code" chunks in the middle of a sentence or as literal backticks. Before the preview and before create/update, scan the text for backticks
 - Language - whatever is standard in your issue tracker
 - Write browser names the user-facing way: Chrome (not Chromium), Safari (not WebKit). This also applies to the test engine (run in Chromium → write "Chrome", in WebKit → "Safari")
+- Do not mention in the description file names that are not attached to the ticket: CMS image names, asset names, screenshots from the run's working folder, logs. The reader takes them for attachments and goes looking for something that does not exist. Identify the element by a visible attribute (caption, heading, position), not by the file name; if the developer really needs the file name - attach the file itself or give a link to it
 - Do not link the created bug to other tickets automatically - only on explicit user request
 
 ## 4. Preview before creation
