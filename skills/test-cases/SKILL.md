@@ -201,7 +201,9 @@ Account for the requirements logic and existing mockups. On mismatch between moc
    — Split Desktop and Mobile if there is responsive layout
    — Target browsers — per project requirements; typical minimum:
      Chrome (Desktop + Android), Safari (iOS)
-   — For Mobile-only test cases, prefix the name with `[Mobile]`
+   — For Mobile-only test cases, prefix the name with `[Mobile]`. Do not add a `[Desktop]`
+     prefix: cases without `[Mobile]` are desktop by default. When editing old cases, remove
+     the `[Desktop]` prefix; leave the word desktop inside a name ("in Safari desktop") as is
 
 8. Style:
    — Businesslike, QA style
