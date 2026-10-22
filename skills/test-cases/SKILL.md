@@ -40,6 +40,12 @@ Account for the requirements logic and existing mockups. On mismatch between moc
    — Name — short and clear (object: essence of the check, e.g. "Calendar
      opening", "List pagination"). No URLs, selectors, or technical details
      in the name (they belong in steps/objective). Do not put TC-(test case number) in the name.
+   — Objective: 1-2 lines, up to ~200 characters - what is checked and which defect
+     it guards against ("Regression of PROJ-123"). For an automated case, a second
+     line "Autotest: tests/…spec.ts". Defect history, why the data was chosen,
+     browsers, the state "as of a date", what the autotest does not check - belong
+     in the spec comment and the linked tickets, not in the objective. A decision
+     recorded neither in the tracker nor in the code - one sentence.
    — Test case preconditions (if applicable)
    — Steps (maximally detailed, atomic)
    — Expected result (state it only after logically significant steps)
@@ -67,6 +73,36 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      ❌ "similarly", "repeat the steps", "as in the previous test case",
      ❌ "select values per the test case name"
      Each step must read independently of other test cases.
+   — Everything the tester copies goes into the step's Test Data (`testData`),
+     ready to paste:
+     • a GET request - as a full link that opens in the browser. GraphQL accepts
+       GET too: `https://…/graphql?query=` + the query through encodeURIComponent.
+       An unreadable encoded link gets a short link text ("GraphQL - fields of
+       item 123"), the full URL lives only in href;
+     • POST/PUT - `curl -i` on one line (without `-i` the status is not in the
+       output, while the expected result requires it): full URL, the headers you
+       need, the body (`-F` for multipart, `--form-string` for a JSON string inside
+       a multipart field, `-H 'Content-Type: application/json' -d '…'` for JSON);
+       a unique email via `$(date +%s)` right inside the curl; a chain of requests -
+       through a shell variable in the same terminal; a boundary length - through
+       `printf` (`'$(printf '%0101d' 0 | tr 0 A)'` gives 101 letters A), not a typed
+       run of 101 characters: such a run comes out one off when copied, and the
+       boundary stops being checked;
+     • form field values - as "Field: value" lines separated by `<br />`;
+     • a DevTools Console snippet - on one line, its output goes into the expected
+       result. A heavy response or a check over a whole list - a snippet run on the
+       opened link that prints the verdict itself:
+       `fetch(location.href).then(r=>r.json()).then(d=>…)`.
+     The description keeps only the action: "Send the request from Test Data in the
+     terminal", "Open the link from Test Data, find the code from step 1 (Ctrl+F)". A
+     request retold in prose ("POST … with body: userName 'Test', …") and a request
+     without the request itself ("query the element in GraphQL") are forbidden.
+   — Filling a form with a set of values from Test Data is one step. Do not spawn
+     separate steps "Select the region", "Tick the checkbox" with expected results
+     like "The region is selected".
+   — If a request or a form submit creates a real record in production (an
+     application, a ticket, an email, an event) - one line in the precondition:
+     "PROD. The request creates a real application in the CRM."
 
 3. Expected result:
    — By default — a separate Expected Result after significant steps, not one shared block at the end
@@ -91,6 +127,16 @@ Account for the requirements logic and existing mockups. On mismatch between moc
      reference from a working PROD implementation of the same requirement (e.g.
      the same validation text on a live form), when the analyst has explicitly
      confirmed the requirement is unchanged.
+   — Exact values that can be checked by eye:
+     • API - status and key fields as in the response: `HTTP 200, "errors":[]`,
+       `"id":"123"`, a concrete address or text;
+     • form - verbatim success and error screen texts, field values after the
+       input mask, field values in the request payload ("phone: +1 (555) 010-0000");
+     • navigation - the full final URL.
+     Not acceptable as an expected result: "correctly", "successfully", "matches
+     the contract", "non-empty", "at least one", "The page is open", "The values
+     are shown in the fields". "Non-empty" only when the exact value is
+     deliberately not pinned down, and then name the case that checks the format.
 
 4. Coverage:
    **Negatives are a required artifact, not optional.** Add a dedicated "Negative/Boundary" group; in the coverage assessment (section 12) list which negative classes are covered and which are consciously skipped (with a reason). A positive-only set is incomplete, even if the object looks simple/navigational.
@@ -288,6 +334,18 @@ Distinguish two types of questions about ambiguities:
    — If the TMS renders descriptions as HTML (e.g. Zephyr Scale DC) — format
      the URL as a clickable link `<a href="https://...">https://...</a>`,
      so the link in the test case is clickable.
+   — Step fields are HTML, hence the constraints (seen on Zephyr Scale DC):
+     `{text}` turns into a test case parameter (span `atwho-inserted`), and so does
+     a JSON body inside a curl. Write braces as the HTML entities `&#123;` and
+     `&#125;` - the UI shows and copies them as `{` `}`; in links use `%7B`, `%7D`.
+     Do not use angle brackets, write placeholders in words; `<` and `>` in data
+     (`<br>` inside a request body, `=>` in a snippet) - as `&lt;` and `&gt;`; a
+     line break - `<br />`; curl - on one line (`\` continuations get glued
+     together). Do not suggest Postman in steps: it does not evaluate
+     `$(date +%s)`. After writing, read the case back and compare the text 1:1
+     (no `atwho` spans, no tags turned into text).
+   — When updating a case that has no Type - fill it in along the way (an API case
+     is Integration).
 
 14. Parallel execution via subagents (pays off from ~10 test cases up):
 
