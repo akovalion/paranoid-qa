@@ -341,7 +341,12 @@ Distinguish two types of questions about ambiguities:
      Do not use angle brackets, write placeholders in words; `<` and `>` in data
      (`<br>` inside a request body, `=>` in a snippet) - as `&lt;` and `&gt;`; a
      line break - `<br />`; curl - on one line (`\` continuations get glued
-     together). Do not suggest Postman in steps: it does not evaluate
+     together). An image in an expected result is an `<img>` tag pointing at a
+     case attachment (Zephyr DC: `<img src="../rest/tests/1.0/attachment/image/N">`):
+     when replacing the expected result text, carry the tag over into the new
+     text, or the screenshot disappears from the step. Rewriting the whole script
+     re-parses the untouched steps too: raw `{…}` in them also become
+     parameters. Do not suggest Postman in steps: it does not evaluate
      `$(date +%s)`. After writing, read the case back and compare the text 1:1
      (no `atwho` spans, no tags turned into text).
    — When updating a case that has no Type - fill it in along the way (an API case
